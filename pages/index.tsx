@@ -1,86 +1,202 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod';
+import { Button, Label, TextInput } from 'flowbite-react';
+
+const LoanSchema = z
+  .object({
+    amount: z.coerce
+      .number({
+        required_error: 'Requerido',
+      })
+      .min(1),
+    term: z.coerce
+      .number({
+        required_error: 'Requerido',
+      })
+      .min(1, 'Plazo debe ser mayor que 0'),
+    fixedTerm: z.coerce.number().min(0).optional(),
+    fixedRate: z.coerce
+      .number({
+        required_error: 'Requerido',
+      })
+      .min(0)
+      .optional(),
+    variableRate: z.coerce
+      .number({
+        required_error: 'Requerido',
+      })
+      .min(1),
+    extraPayment: z.coerce.number({
+      required_error: 'Requerido',
+    }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fixedTerm && data.fixedTerm > data.term) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.too_big,
+        maximum: data.fixedTerm,
+        type: 'number',
+        inclusive: true,
+        path: ['fixedTerm'],
+        message:
+          'Plazo de tasa fija no puede ser mayor que el plazo total del crédito',
+      });
+    }
+  });
+
+type Loan = z.infer<typeof LoanSchema>;
 
 const Home: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Loan>({
+    resolver: zodResolver(LoanSchema),
+    defaultValues: {
+      amount: 100000,
+      term: 20,
+      fixedTerm: 2,
+      fixedRate: 8.25,
+      variableRate: 10.25,
+      extraPayment: 0,
+    },
+  });
+  const onSubmit: SubmitHandler<Loan> = data => console.log(data);
+  function getVariableTerm() {
+    return watch('term') - (watch('fixedTerm') || 0);
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <h1 className='text-6xl font-bold'>Loan Calculator</h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className='grid gap-6 mb-6 md:grid-cols-3'>
+          <div>
+            <div className='mb-2 block'>
+              <Label htmlFor='amount' value='Monto total del crédito' />
+            </div>
+            <TextInput
+              id='amount'
+              addon='$'
+              type='number'
+              {...register('amount')}
+              color={errors.amount ? 'failure' : undefined}
+              helperText={errors.amount?.message}
+              aria-invalid={errors.amount ? 'true' : 'false'}
+              aria-describedby='amount'
+              min='0'
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label htmlFor='term' value='Plazo total del crédito' />
+            </div>
+            <TextInput
+              id='term'
+              addon='Años'
+              type='number'
+              {...register('term')}
+              color={errors.term ? 'failure' : undefined}
+              helperText={errors.term?.message}
+              aria-invalid={errors.term ? 'true' : 'false'}
+              aria-describedby='term'
+              min='0'
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label htmlFor='fixedRate' value='Tasa fija' />
+            </div>
+            <TextInput
+              id='fixedRate'
+              addon='%'
+              type='number'
+              {...register('fixedRate')}
+              color={errors.fixedRate ? 'failure' : undefined}
+              helperText={errors.fixedRate?.message}
+              aria-invalid={errors.fixedRate ? 'true' : 'false'}
+              aria-describedby='fixedRate'
+              min='0'
+              step='0.01'
+            />
+          </div>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          <div>
+            <div className='mb-2 block'>
+              <Label htmlFor='fixedTerm' value='Plazo de la tasa fija' />
+            </div>
+            <TextInput
+              id='fixedTerm'
+              addon='Años'
+              type='number'
+              {...register('fixedTerm')}
+              color={errors.fixedTerm ? 'failure' : undefined}
+              helperText={errors.fixedTerm?.message}
+              aria-invalid={errors.fixedTerm ? 'true' : 'false'}
+              aria-describedby='fixedTerm'
+              min='0'
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label htmlFor='variableRate' value='Tasa variable' />
+            </div>
+            <TextInput
+              id='variableRate'
+              addon='%'
+              type='number'
+              {...register('variableRate')}
+              color={errors.variableRate ? 'failure' : undefined}
+              helperText={errors.variableRate?.message}
+              aria-invalid={errors.variableRate ? 'true' : 'false'}
+              aria-describedby='variableRate'
+              min='0'
+              step='0.01'
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label htmlFor='variableTerm' value='Plazo de la tasa variable' />
+            </div>
+            <TextInput
+              id='variableTerm'
+              addon='Años'
+              type='number'
+              disabled={true}
+              aria-describedby='variableTerm'
+              min='0'
+              value={getVariableTerm()}
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label
+                htmlFor='extraPayment'
+                value='Pago mensual extraordinario (opcional)'
+              />
+            </div>
+            <TextInput
+              id='extraPayment'
+              addon='$'
+              type='number'
+              {...register('extraPayment')}
+              color={errors.extraPayment ? 'failure' : undefined}
+              helperText={errors.extraPayment?.message}
+              aria-invalid={errors.extraPayment ? 'true' : 'false'}
+              aria-describedby='extraPayment'
+              min='0'
+            />
+          </div>
         </div>
-      </main>
+        <Button>Calcular</Button>
+      </form>
+    </>
+  );
+};
 
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
-    </div>
-  )
-}
-
-export default Home
+export default Home;
