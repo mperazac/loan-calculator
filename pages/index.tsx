@@ -1,53 +1,10 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import LoanInfo from '@/components/common/LoanInfo';
+import { Loan, LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
-import z from 'zod';
 import { Button, Label, TextInput } from 'flowbite-react';
-
-const LoanSchema = z
-  .object({
-    amount: z.coerce
-      .number({
-        required_error: 'Requerido',
-      })
-      .min(1),
-    term: z.coerce
-      .number({
-        required_error: 'Requerido',
-      })
-      .min(1, 'Plazo debe ser mayor que 0'),
-    fixedTerm: z.coerce.number().min(0).optional(),
-    fixedRate: z.coerce
-      .number({
-        required_error: 'Requerido',
-      })
-      .min(0)
-      .optional(),
-    variableRate: z.coerce
-      .number({
-        required_error: 'Requerido',
-      })
-      .min(1),
-    extraPayment: z.coerce.number({
-      required_error: 'Requerido',
-    }),
-  })
-  .superRefine((data, ctx) => {
-    if (data.fixedTerm && data.fixedTerm > data.term) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_big,
-        maximum: data.fixedTerm,
-        type: 'number',
-        inclusive: true,
-        path: ['fixedTerm'],
-        message:
-          'Plazo de tasa fija no puede ser mayor que el plazo total del crédito',
-      });
-    }
-  });
-
-type Loan = z.infer<typeof LoanSchema>;
+import type { NextPage } from 'next';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 const Home: NextPage = () => {
   const {
@@ -58,17 +15,19 @@ const Home: NextPage = () => {
   } = useForm<Loan>({
     resolver: zodResolver(LoanSchema),
     defaultValues: {
-      amount: 100000,
-      term: 20,
+      principal: 100000,
+      loanTermInYears: 20,
       fixedTerm: 2,
       fixedRate: 8.25,
       variableRate: 10.25,
       extraPayment: 0,
     },
   });
-  const onSubmit: SubmitHandler<Loan> = data => console.log(data);
+  const [loan, setLoan] = useState<Loan>();
+  const onSubmit: SubmitHandler<Loan> = data => setLoan(data);
+
   function getVariableTerm() {
-    return watch('term') - (watch('fixedTerm') || 0);
+    return watch('loanTermInYears') - (watch('fixedTerm') || 0);
   }
 
   return (
@@ -78,33 +37,36 @@ const Home: NextPage = () => {
         <div className='grid gap-6 mb-6 md:grid-cols-3'>
           <div>
             <div className='mb-2 block'>
-              <Label htmlFor='amount' value='Monto total del crédito' />
+              <Label htmlFor='principal' value='Monto total del crédito' />
             </div>
             <TextInput
-              id='amount'
+              id='principal'
               addon='$'
               type='number'
-              {...register('amount')}
-              color={errors.amount ? 'failure' : undefined}
-              helperText={errors.amount?.message}
-              aria-invalid={errors.amount ? 'true' : 'false'}
-              aria-describedby='amount'
+              {...register('principal')}
+              color={errors.principal ? 'failure' : undefined}
+              helperText={errors.principal?.message}
+              aria-invalid={errors.principal ? 'true' : 'false'}
+              aria-describedby='principal'
               min='0'
             />
           </div>
           <div>
             <div className='mb-2 block'>
-              <Label htmlFor='term' value='Plazo total del crédito' />
+              <Label
+                htmlFor='loanTermInYears'
+                value='Plazo total del crédito'
+              />
             </div>
             <TextInput
-              id='term'
+              id='loanTermInYears'
               addon='Años'
               type='number'
-              {...register('term')}
-              color={errors.term ? 'failure' : undefined}
-              helperText={errors.term?.message}
-              aria-invalid={errors.term ? 'true' : 'false'}
-              aria-describedby='term'
+              {...register('loanTermInYears')}
+              color={errors.loanTermInYears ? 'failure' : undefined}
+              helperText={errors.loanTermInYears?.message}
+              aria-invalid={errors.loanTermInYears ? 'true' : 'false'}
+              aria-describedby='loanTermInYears'
               min='0'
             />
           </div>
@@ -193,8 +155,9 @@ const Home: NextPage = () => {
             />
           </div>
         </div>
-        <Button>Calcular</Button>
+        <Button type='submit'>Calcular</Button>
       </form>
+      {loan && <LoanInfo {...loan}></LoanInfo>}
     </>
   );
 };
