@@ -1,5 +1,6 @@
 import {
   calculateMonthlyPayment,
+  calculateTotalInsurancePayments,
   calculateTotalInterest,
   calculateTotalPayment,
   roundAndFormat,
@@ -15,54 +16,73 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
     principal,
     fixedRate = 0,
     loanTermInYears,
+    lifeInsurance = 0,
+    fireInsurance = 0,
+    jobLossInsurance = 0,
   } = props;
-
-  /* const arrayOfMonths: Array<number> = R.times(
-    R.identity,
-    fixedTerm * MONTHS_PER_YEAR,
-  );
-  const amountAfterFixedPaymentsTerm = R.reduce(
-    (_amount: number) => {
-      const montlyPayment = calculateMontlyPayment(
-        _amount,
-        fixedMontlyInterestRate,
-        fixedRateTotalNumberOfPayments,
-      );
-      return _amount - (montlyPayment - _amount * fixedMontlyInterestRate);
-    },
-    amount,
-    arrayOfMonths,
-  ); */
-
+  const totalInsurancePerMonth =
+    lifeInsurance + fireInsurance + jobLossInsurance;
   return (
     <div className='mt-10 flex gap-5'>
       <Card className=' w-60'>
-        <h5 className='text-xl text-gray-700 tracking-tight  dark:text-white'>
-          Pago mensual
+        <h5 className='text-sm font-bold text-gray-700 tracking-tight  dark:text-white uppercase'>
+          Cuota mensual
         </h5>
-        <p className='text-2xl font-bold text-gray-900 dark:text-gray-400'>
+        <p className='text-2xl text-gray-900 dark:text-gray-400'>
           {roundAndFormat(
             calculateMonthlyPayment(principal, fixedRate, loanTermInYears),
           )}
         </p>
       </Card>
       <Card className=' w-60'>
-        <h5 className='text-xl text-gray-700 tracking-tight  dark:text-white'>
+        <h5 className='text-sm font-bold text-gray-700 tracking-tight  dark:text-white uppercase'>
+          Cuota mensual con seguros
+        </h5>
+        <p className='text-2xl text-gray-900 dark:text-gray-400'>
+          {roundAndFormat(
+            calculateMonthlyPayment(principal, fixedRate, loanTermInYears) +
+              totalInsurancePerMonth,
+          )}
+        </p>
+      </Card>
+      <Card className=' w-60'>
+        <h5 className='text-sm font-bold text-gray-700 tracking-tight  dark:text-white uppercase'>
           Total en intereses
         </h5>
-        <p className='text-2xl font-bold text-gray-900 dark:text-gray-400'>
+        <p className='text-2xl text-gray-900 dark:text-gray-400'>
           {roundAndFormat(
             calculateTotalInterest(principal, fixedRate, loanTermInYears),
           )}
         </p>
       </Card>
       <Card className=' w-60'>
-        <h5 className='text-xl text-gray-700 tracking-tight  dark:text-white'>
-          Total al final del plazo
+        <h5 className='text-sm font-bold text-gray-700 tracking-tight  dark:text-white uppercase'>
+          Total en seguros
         </h5>
-        <p className='text-2xl font-bold text-gray-900 dark:text-gray-400'>
+        <p className='text-2xl text-gray-900 dark:text-gray-400'>
           {roundAndFormat(
-            calculateTotalPayment(principal, fixedRate, loanTermInYears),
+            calculateTotalInsurancePayments(
+              loanTermInYears,
+              lifeInsurance,
+              fireInsurance,
+              jobLossInsurance,
+            ),
+          )}
+        </p>
+      </Card>
+      <Card className=' w-60'>
+        <h5 className='text-sm font-bold text-gray-700 tracking-tight  dark:text-white uppercase'>
+          Total a pagar
+        </h5>
+        <p className='text-2xl text-gray-900 dark:text-gray-400'>
+          {roundAndFormat(
+            calculateTotalPayment(principal, fixedRate, loanTermInYears) +
+              calculateTotalInsurancePayments(
+                loanTermInYears,
+                lifeInsurance,
+                fireInsurance,
+                jobLossInsurance,
+              ),
           )}
         </p>
       </Card>

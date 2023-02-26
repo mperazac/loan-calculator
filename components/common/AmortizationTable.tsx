@@ -1,19 +1,16 @@
+import {
+  generateAmortizationSchedule,
+  roundAndFormat
+} from '@/lib/math.utils';
 import { AmortizationRow, Loan } from '@/types/loan';
-import * as React from 'react';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Table } from 'flowbite-react';
-import {
-  calculateLoanTermInMonths,
-  calculateMonthlyInterestRate,
-  calculateMonthlyPayment,
-  generateAmortizationSchedule,
-  roundAndFormat,
-} from '@/lib/math.utils';
+import * as React from 'react';
 
 type IAmortizationTableProps = Loan;
 

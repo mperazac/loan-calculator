@@ -101,3 +101,17 @@ export function generateAmortizationSchedule(
   }
   return data;
 }
+
+// Calculate the total payments for insurances in a loan
+export function calculateTotalInsurancePayments(
+  loanTermInYears: number,
+  lifeInsurance = 0,
+  fireInsurance = 0,
+  jobLossInsurance = 0,
+) {
+  return (
+    loanTermInYears *
+    MONTHS_PER_YEAR *
+    (lifeInsurance + fireInsurance + jobLossInsurance)
+  );
+}

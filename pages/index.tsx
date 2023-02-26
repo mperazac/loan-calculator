@@ -22,7 +22,11 @@ const Home: NextPage = () => {
       fixedRate: 8.25,
       variableRate: 10.25,
       extraPayment: 0,
+      lifeInsurance: 0,
+      fireInsurance: 0,
+      jobLossInsurance: 0,
     },
+    mode: 'onChange',
   });
   const [loan, setLoan] = useState<Loan>();
   const onSubmit: SubmitHandler<Loan> = data => setLoan(data);
@@ -35,7 +39,7 @@ const Home: NextPage = () => {
     <>
       <h1 className='text-6xl font-bold'>Loan Calculator</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className='grid gap-6 mb-6 md:grid-cols-3'>
+        <div className='grid gap-6 mb-6 md:grid-cols-6'>
           <div>
             <div className='mb-2 block'>
               <Label htmlFor='principal' value='Monto total del crédito' />
@@ -134,6 +138,66 @@ const Home: NextPage = () => {
               aria-describedby='variableTerm'
               min='0'
               value={getVariableTerm()}
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label
+                htmlFor='lifeInsurance'
+                value='Seguro de vida (opcional)'
+              />
+            </div>
+            <TextInput
+              id='lifeInsurance'
+              addon='$'
+              type='number'
+              {...register('lifeInsurance')}
+              color={errors.lifeInsurance ? 'failure' : undefined}
+              helperText={errors.lifeInsurance?.message}
+              aria-invalid={errors.lifeInsurance ? 'true' : 'false'}
+              aria-describedby='lifeInsurance'
+              min='0'
+              step='0.01'
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label
+                htmlFor='fireInsurance'
+                value='Seguro de incendio (opcional)'
+              />
+            </div>
+            <TextInput
+              id='fireInsurance'
+              addon='$'
+              type='number'
+              {...register('fireInsurance')}
+              color={errors.fireInsurance ? 'failure' : undefined}
+              helperText={errors.fireInsurance?.message}
+              aria-invalid={errors.fireInsurance ? 'true' : 'false'}
+              aria-describedby='fireInsurance'
+              min='0'
+              step='0.01'
+            />
+          </div>
+          <div>
+            <div className='mb-2 block'>
+              <Label
+                htmlFor='jobLossInsurance'
+                value='Seguro de desempleo (opcional)'
+              />
+            </div>
+            <TextInput
+              id='jobLossInsurance'
+              addon='$'
+              type='number'
+              {...register('jobLossInsurance')}
+              color={errors.jobLossInsurance ? 'failure' : undefined}
+              helperText={errors.jobLossInsurance?.message}
+              aria-invalid={errors.jobLossInsurance ? 'true' : 'false'}
+              aria-describedby='jobLossInsurance'
+              min='0'
+              step='0.01'
             />
           </div>
           <div>

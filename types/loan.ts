@@ -24,9 +24,11 @@ export const LoanSchema = z
         required_error: 'Requerido',
       })
       .min(1),
-    extraPayment: z.coerce.number({
-      required_error: 'Requerido',
-    }),
+    extraPayment: z.coerce.number().min(0).optional(),
+    lifeInsurance: z.coerce.number().min(0).optional(),
+    fireInsurance: z.coerce.number().min(0).optional(),
+    jobLossInsurance: z.coerce.number().min(0).optional(),
+
   })
   .superRefine((data, ctx) => {
     if (data.fixedTerm && data.fixedTerm > data.loanTermInYears) {

@@ -6,6 +6,7 @@ import {
   calculateTotalPayment,
   generateAmortizationSchedule,
   round,
+  calculateTotalInsurancePayments,
 } from '@/lib/math.utils';
 import { it, describe, expect } from 'vitest';
 
@@ -55,5 +56,12 @@ describe('Test all math operations', () => {
     expect(round(result[0].endingBalance)).toBe(124920.29);
     expect(round(result[0].totalInterest)).toBe(859.38);
     expect(round(result[359].month)).toBe(360);
+  });
+  it('Calculate the total payments for insurances in a loan', () => {
+    const lifeInsurance = 120;
+    const fireInsurance = 140;
+    const jobLossInsurance = 100;
+    const result = calculateTotalInsurancePayments(termInYears, lifeInsurance, fireInsurance, jobLossInsurance);
+    expect(result).toBe(129600);
   });
 });
