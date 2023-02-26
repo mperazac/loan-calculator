@@ -43,3 +43,13 @@ export const LoanSchema = z
   });
 
 export type Loan = z.infer<typeof LoanSchema>;
+
+export type AmortizationRow = {
+  month: number;
+  startingBalance: number;
+  payment: number;
+  interest: number;
+  principal: number;
+  endingBalance: number;
+  totalInterest: number;
+};

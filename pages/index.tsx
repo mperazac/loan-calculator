@@ -1,3 +1,4 @@
+import AmortizationTable from '@/components/common/AmortizationTable';
 import LoanInfo from '@/components/common/LoanInfo';
 import { Loan, LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -157,7 +158,12 @@ const Home: NextPage = () => {
         </div>
         <Button type='submit'>Calcular</Button>
       </form>
-      {loan && <LoanInfo {...loan}></LoanInfo>}
+      {loan && (
+        <>
+          <LoanInfo {...loan}></LoanInfo>
+          <AmortizationTable {...loan} />
+        </>
+      )}
     </>
   );
 };

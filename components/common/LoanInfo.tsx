@@ -8,16 +8,13 @@ import { Loan } from '@/types/loan';
 import { Card } from 'flowbite-react';
 import * as React from 'react';
 
-type LoanInfoProps = {} & Loan;
+type LoanInfoProps = Loan;
 
 const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
   const {
     principal,
     fixedRate = 0,
-    fixedTerm = 0,
-    variableRate,
-    loanTermInYears: term,
-    extraPayment,
+    loanTermInYears,
   } = props;
 
   /* const arrayOfMonths: Array<number> = R.times(
@@ -45,7 +42,7 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
         </h5>
         <p className='text-2xl font-bold text-gray-900 dark:text-gray-400'>
           {roundAndFormat(
-            calculateMonthlyPayment(principal, fixedRate, fixedTerm),
+            calculateMonthlyPayment(principal, fixedRate, loanTermInYears),
           )}
         </p>
       </Card>
@@ -55,7 +52,7 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
         </h5>
         <p className='text-2xl font-bold text-gray-900 dark:text-gray-400'>
           {roundAndFormat(
-            calculateTotalInterest(principal, fixedRate, fixedTerm),
+            calculateTotalInterest(principal, fixedRate, loanTermInYears),
           )}
         </p>
       </Card>
@@ -65,7 +62,7 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
         </h5>
         <p className='text-2xl font-bold text-gray-900 dark:text-gray-400'>
           {roundAndFormat(
-            calculateTotalPayment(principal, fixedRate, fixedTerm),
+            calculateTotalPayment(principal, fixedRate, loanTermInYears),
           )}
         </p>
       </Card>

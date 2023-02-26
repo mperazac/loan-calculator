@@ -1,3 +1,4 @@
+import { AmortizationRow } from './../types/loan';
 const MONTHS_PER_YEAR = 12;
 
 export function calculateMonthlyInterestRate(interestRate: number) {
@@ -26,7 +27,7 @@ export function calculateTotalInterest(
   return totalInterest;
 }
 
-function round(x: number) {
+export function round(x: number) {
   return Math.round(x * 100) / 100;
 }
 
@@ -65,4 +66,38 @@ export function calculateTotalPayment(
   );
   const totalPayment = monthlyPayment * loanTermInMonths;
   return totalPayment;
+}
+
+// Generates a table of monthly payments for a loan
+export function generateAmortizationSchedule(
+  principal: number,
+  interestRate: number,
+  loanTermInYears: number,
+): AmortizationRow[] {
+  const data = [];
+  const monthlyRate = calculateMonthlyInterestRate(interestRate);
+  const numberOfPayments = calculateLoanTermInMonths(loanTermInYears);
+  const monthlyPayment = calculateMonthlyPayment(
+    principal,
+    interestRate,
+    loanTermInYears,
+  );
+  let balance = principal;
+  let totalInterest = 0;
+  for (let i = 0; i < numberOfPayments; i++) {
+    const interest = balance * monthlyRate;
+    const principal = monthlyPayment - interest;
+    balance = balance - principal;
+    totalInterest += interest;
+    data.push({
+      month: i + 1,
+      startingBalance: balance + principal,
+      payment: monthlyPayment,
+      interest,
+      principal,
+      endingBalance: balance,
+      totalInterest,
+    });
+  }
+  return data;
 }
