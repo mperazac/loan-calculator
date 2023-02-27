@@ -1,13 +1,10 @@
-import {
-  generateAmortizationSchedule,
-  roundAndFormat
-} from '@/lib/math.utils';
+import { generateAmortizationSchedule, roundAndFormat } from '@/lib/math.utils';
 import { AmortizationRow, Loan } from '@/types/loan';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  useReactTable
+  useReactTable,
 } from '@tanstack/react-table';
 import { Table } from 'flowbite-react';
 import * as React from 'react';
@@ -17,7 +14,7 @@ type IAmortizationTableProps = Loan;
 const AmortizationTable: React.FunctionComponent<
   IAmortizationTableProps
 > = props => {
-  const { principal, fixedRate = 0, loanTermInYears } = props;
+  const { principal, fixedRate = 0, termInYears, extraPayment = 0 } = props;
   const columnHelper = createColumnHelper<AmortizationRow>();
   const columns = React.useMemo(
     () => [
@@ -54,8 +51,13 @@ const AmortizationTable: React.FunctionComponent<
   );
 
   const data = React.useMemo(() => {
-    return generateAmortizationSchedule(principal, fixedRate, loanTermInYears);
-  }, [fixedRate, loanTermInYears, principal]);
+    return generateAmortizationSchedule(
+      principal,
+      fixedRate,
+      termInYears,
+      extraPayment,
+    );
+  }, [principal, fixedRate, termInYears, extraPayment]);
 
   const table = useReactTable({
     data,

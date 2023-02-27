@@ -14,6 +14,7 @@ describe('Test all math operations', () => {
   const principal = 125000;
   const interestRate = 8.25;
   const termInYears = 30;
+  const extraMonthlyPayment = 200;
 
   it('calculates the montly interest rate', () => {
     const result = calculateMonthlyInterestRate(interestRate);
@@ -34,12 +35,40 @@ describe('Test all math operations', () => {
     expect(result).toBe(939.0832550636559);
   });
   it('calculates the total interest', () => {
-    const result = calculateTotalInterest(principal, interestRate, termInYears);
-    expect(result).toBe(213069.97182291612);
+    const result = calculateTotalInterest(
+      principal,
+      interestRate,
+      termInYears,
+      0,
+    );
+    expect(result).toBe(213069.97182291475);
+  });
+  it('calculates the total interest with extra monthly payments', () => {
+    const result = calculateTotalInterest(
+      principal,
+      interestRate,
+      termInYears,
+      extraMonthlyPayment,
+    );
+    expect(result).toBe(108458.96960231283);
   });
   it('calculates the total loan payment', () => {
-    const result = calculateTotalPayment(principal, interestRate, termInYears);
+    const result = calculateTotalPayment(
+      principal,
+      interestRate,
+      termInYears,
+      0,
+    );
     expect(result).toBe(338069.9718229161);
+  });
+  it('calculates the total loan payment with extra montly payments', () => {
+    const result = calculateTotalPayment(
+      principal,
+      interestRate,
+      termInYears,
+      200,
+    );
+    expect(result).toBe(233458.96960231266);
   });
   it('generates a table of monthly payments', () => {
     const result = generateAmortizationSchedule(
@@ -61,7 +90,12 @@ describe('Test all math operations', () => {
     const lifeInsurance = 120;
     const fireInsurance = 140;
     const jobLossInsurance = 100;
-    const result = calculateTotalInsurancePayments(termInYears, lifeInsurance, fireInsurance, jobLossInsurance);
+    const result = calculateTotalInsurancePayments(
+      termInYears,
+      lifeInsurance,
+      fireInsurance,
+      jobLossInsurance,
+    );
     expect(result).toBe(129600);
   });
 });

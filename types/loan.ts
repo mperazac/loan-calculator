@@ -7,7 +7,7 @@ export const LoanSchema = z
         required_error: 'Requerido',
       })
       .min(1),
-    loanTermInYears: z.coerce
+    termInYears: z.coerce
       .number({
         required_error: 'Requerido',
       })
@@ -28,10 +28,9 @@ export const LoanSchema = z
     lifeInsurance: z.coerce.number().min(0).optional(),
     fireInsurance: z.coerce.number().min(0).optional(),
     jobLossInsurance: z.coerce.number().min(0).optional(),
-
   })
   .superRefine((data, ctx) => {
-    if (data.fixedTerm && data.fixedTerm > data.loanTermInYears) {
+    if (data.fixedTerm && data.fixedTerm > data.termInYears) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_big,
         maximum: data.fixedTerm,

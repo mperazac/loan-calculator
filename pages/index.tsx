@@ -17,7 +17,7 @@ const Home: NextPage = () => {
     resolver: zodResolver(LoanSchema),
     defaultValues: {
       principal: 100000,
-      loanTermInYears: 20,
+      termInYears: 20,
       fixedTerm: 2,
       fixedRate: 8.25,
       variableRate: 10.25,
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   const onSubmit: SubmitHandler<Loan> = data => setLoan(data);
 
   function getVariableTerm() {
-    return watch('loanTermInYears') - (watch('fixedTerm') || 0);
+    return watch('termInYears') - (watch('fixedTerm') || 0);
   }
 
   return (
@@ -59,19 +59,19 @@ const Home: NextPage = () => {
           <div>
             <div className='mb-2 block'>
               <Label
-                htmlFor='loanTermInYears'
+                htmlFor='termInYears'
                 value='Plazo total del crédito'
               />
             </div>
             <TextInput
-              id='loanTermInYears'
+              id='termInYears'
               addon='Años'
               type='number'
-              {...register('loanTermInYears')}
-              color={errors.loanTermInYears ? 'failure' : undefined}
-              helperText={errors.loanTermInYears?.message}
-              aria-invalid={errors.loanTermInYears ? 'true' : 'false'}
-              aria-describedby='loanTermInYears'
+              {...register('termInYears')}
+              color={errors.termInYears ? 'failure' : undefined}
+              helperText={errors.termInYears?.message}
+              aria-invalid={errors.termInYears ? 'true' : 'false'}
+              aria-describedby='termInYears'
               min='0'
             />
           </div>
