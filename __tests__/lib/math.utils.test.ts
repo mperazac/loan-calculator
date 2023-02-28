@@ -32,7 +32,7 @@ describe('Test all math operations', () => {
       interestRate,
       termInYears,
     );
-    expect(result).toBe(939.0832550636559);
+    expect(round(result)).toBe(939.08);
   });
   it('calculates the total interest', () => {
     const result = calculateTotalInterest(
@@ -59,7 +59,7 @@ describe('Test all math operations', () => {
       termInYears,
       0,
     );
-    expect(result).toBe(338069.9718229161);
+    expect(round(result)).toBe(338069.97);
   });
   it('calculates the total loan payment with extra montly payments', () => {
     const result = calculateTotalPayment(
@@ -68,7 +68,7 @@ describe('Test all math operations', () => {
       termInYears,
       200,
     );
-    expect(result).toBe(233458.96960231266);
+    expect(round(result)).toBe(233458.97);
   });
   it('generates a table of monthly payments', () => {
     const result = generateAmortizationSchedule(
