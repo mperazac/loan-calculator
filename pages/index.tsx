@@ -1,5 +1,5 @@
-import AmortizationTable from '@/components/common/AmortizationTable';
-import LoanInfo from '@/components/common/LoanInfo';
+import AmortizationTable from '@/components/AmortizationTable';
+import LoanInfo from '@/components/LoanInfo';
 import { Loan, LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Label, TextInput } from 'flowbite-react';

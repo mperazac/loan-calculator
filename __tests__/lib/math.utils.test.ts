@@ -38,7 +38,9 @@ describe('Test all math operations', () => {
     const result = calculateTotalInterest(
       principal,
       interestRate,
+      0,
       termInYears,
+      0,
       0,
     );
     expect(result).toBe(213069.97182291475);
@@ -47,7 +49,9 @@ describe('Test all math operations', () => {
     const result = calculateTotalInterest(
       principal,
       interestRate,
+      0,
       termInYears,
+      0,
       extraMonthlyPayment,
     );
     expect(result).toBe(108458.96960231283);
@@ -56,7 +60,9 @@ describe('Test all math operations', () => {
     const result = calculateTotalPayment(
       principal,
       interestRate,
+      0,
       termInYears,
+      0,
       0,
     );
     expect(round(result)).toBe(338069.97);
@@ -65,7 +71,9 @@ describe('Test all math operations', () => {
     const result = calculateTotalPayment(
       principal,
       interestRate,
+      0,
       termInYears,
+      0,
       200,
     );
     expect(round(result)).toBe(233458.97);
