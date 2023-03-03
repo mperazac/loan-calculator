@@ -107,6 +107,7 @@ export function calculateTotalPayment(loan: Loan) {
 export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
   const data: AmortizationRow[] = [];
   const { principal, periods, totalTermInYears, extraPayment = 0 } = loan;
+  let month = 0;
   let balance = principal;
   let totalInterest = 0;
   let termInYearsLeft = totalTermInYears;
@@ -126,9 +127,10 @@ export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
       const interest = balance * monthlyRate;
       const payment = monthlyPayment + extraPayment;
       totalInterest += interest;
+      month += 1;
       if (payment > balance + interest) {
         data.push({
-          month: i + 1,
+          month,
           startingBalance: balance,
           payment: balance + interest,
           interest,
@@ -141,7 +143,7 @@ export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
       const principalPayment = payment - interest;
       balance -= principalPayment;
       data.push({
-        month: i + 1,
+        month,
         startingBalance: balance + principalPayment,
         payment,
         interest,
