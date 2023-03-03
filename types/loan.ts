@@ -7,40 +7,45 @@ export const LoanSchema = z
         required_error: 'Requerido',
       })
       .min(1),
-    termInYears: z.coerce
+    totalTermInYears: z.coerce
       .number({
         required_error: 'Requerido',
       })
       .min(1, 'Plazo debe ser mayor que 0'),
-    fixedTerm: z.coerce.number().min(0).optional(),
-    fixedRate: z.coerce
-      .number({
-        required_error: 'Requerido',
-      })
-      .min(0)
-      .optional(),
-    variableRate: z.coerce
-      .number({
-        required_error: 'Requerido',
-      })
-      .min(1),
+    periods: z.array(
+      z.object({
+        termInYears: z.coerce
+          .number({
+            required_error: 'Requerido',
+          })
+          .min(1, 'Plazo debe ser mayor que 0'),
+        annualInterestRate: z.coerce
+          .number({
+            required_error: 'Requerido',
+          })
+          .min(0),
+      }),
+    ),
     extraPayment: z.coerce.number().min(0).optional(),
     lifeInsurance: z.coerce.number().min(0).optional(),
     fireInsurance: z.coerce.number().min(0).optional(),
     jobLossInsurance: z.coerce.number().min(0).optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.fixedTerm && data.fixedTerm > data.termInYears) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_big,
-        maximum: data.fixedTerm,
-        type: 'number',
-        inclusive: true,
-        path: ['fixedTerm'],
-        message:
-          'Plazo de tasa fija no puede ser mayor que el plazo total del crédito',
-      });
-    }
+    let totalTerm = 0;
+    data.periods.forEach((period, index) => {
+      totalTerm += period.termInYears;
+      if (totalTerm > data.totalTermInYears) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_big,
+          maximum: data.totalTermInYears,
+          type: 'number',
+          inclusive: true,
+          path: ['periods', index, 'termInYears'],
+          message: 'Plazo no puede ser mayor que el plazo total del crédito',
+        });
+      }
+    });
   });
 
 export type Loan = z.infer<typeof LoanSchema>;

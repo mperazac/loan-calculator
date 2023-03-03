@@ -9,12 +9,13 @@ import {
 import { Table } from 'flowbite-react';
 import * as React from 'react';
 
-type IAmortizationTableProps = Loan;
+type IAmortizationTableProps = {
+  loan: Loan;
+};
 
-const AmortizationTable: React.FunctionComponent<
-  IAmortizationTableProps
-> = props => {
-  const { principal, fixedRate = 0, termInYears, extraPayment = 0 } = props;
+const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
+  loan,
+}) => {
   const columnHelper = createColumnHelper<AmortizationRow>();
   const columns = React.useMemo(
     () => [
@@ -51,13 +52,8 @@ const AmortizationTable: React.FunctionComponent<
   );
 
   const data = React.useMemo(() => {
-    return generateAmortizationSchedule(
-      principal,
-      fixedRate,
-      termInYears,
-      extraPayment,
-    );
-  }, [principal, fixedRate, termInYears, extraPayment]);
+    return generateAmortizationSchedule(loan);
+  }, [loan]);
 
   const table = useReactTable({
     data,

@@ -1,26 +1,34 @@
 import AmortizationTable from '@/components/AmortizationTable';
+import Card from '@/components/common/Card';
 import LoanInfo from '@/components/LoanInfo';
 import { Loan, LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Label, TextInput } from 'flowbite-react';
 import type { NextPage } from 'next';
 import { useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 const Home: NextPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<Loan>({
     resolver: zodResolver(LoanSchema),
     defaultValues: {
       principal: 100000,
-      termInYears: 20,
-      fixedTerm: 2,
-      fixedRate: 8.25,
-      variableRate: 10.25,
+      totalTermInYears: 20,
+      periods: [
+        {
+          termInYears: 2,
+          annualInterestRate: 8.25,
+        },
+        {
+          termInYears: 18,
+          annualInterestRate: 10.25,
+        },
+      ],
       extraPayment: 0,
       lifeInsurance: 0,
       fireInsurance: 0,
@@ -29,12 +37,15 @@ const Home: NextPage = () => {
     mode: 'onChange',
   });
   const [loan, setLoan] = useState<Loan>();
+  const {
+    fields: periods,
+    append,
+    remove,
+  } = useFieldArray({
+    name: 'periods',
+    control,
+  });
   const onSubmit: SubmitHandler<Loan> = data => setLoan(data);
-
-  function getVariableTerm() {
-    return watch('termInYears') - (watch('fixedTerm') || 0);
-  }
-
   return (
     <>
       <h1 className='text-6xl font-bold'>Loan Calculator</h1>
@@ -58,88 +69,72 @@ const Home: NextPage = () => {
           </div>
           <div>
             <div className='mb-2 block'>
-              <Label
-                htmlFor='termInYears'
-                value='Plazo total del crédito'
-              />
+              <Label htmlFor='termInYears' value='Plazo total del crédito' />
             </div>
             <TextInput
               id='termInYears'
               addon='Años'
               type='number'
-              {...register('termInYears')}
-              color={errors.termInYears ? 'failure' : undefined}
-              helperText={errors.termInYears?.message}
-              aria-invalid={errors.termInYears ? 'true' : 'false'}
+              {...register('totalTermInYears')}
+              color={errors.totalTermInYears ? 'failure' : undefined}
+              helperText={errors.totalTermInYears?.message}
+              aria-invalid={errors.totalTermInYears ? 'true' : 'false'}
               aria-describedby='termInYears'
               min='0'
             />
           </div>
-          <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='fixedRate' value='Tasa fija' />
+          {periods.map((field, index) => (
+            <div key={field.id}>
+              <div className='mb-2 block'>
+                <Label
+                  htmlFor={`periods[${index}].termInYears`}
+                  value={`Plazo del periodo ${index + 1}`}
+                />
+              </div>
+              <TextInput
+                id={`periods[${index}].termInYears`}
+                addon='Años'
+                type='number'
+                {...register(`periods.${index}.termInYears` as const)}
+                color={
+                  errors.periods?.[index]?.termInYears ? 'failure' : undefined
+                }
+                helperText={errors.periods?.[index]?.termInYears?.message}
+                aria-invalid={
+                  errors.periods?.[index]?.termInYears ? 'true' : 'false'
+                }
+                aria-describedby={`periods[${index}].termInYears`}
+                min='0'
+              />
+              <div className='mb-2 block'>
+                <Label
+                  htmlFor={`periods[${index}].annualInterestRate`}
+                  value={`Tasa de interés del periodo ${index + 1}`}
+                />
+              </div>
+              <TextInput
+                id={`periods[${index}].annualInterestRate`}
+                addon='%'
+                type='number'
+                {...register(`periods.${index}.annualInterestRate` as const)}
+                color={
+                  errors.periods?.[index]?.annualInterestRate
+                    ? 'failure'
+                    : undefined
+                }
+                helperText={
+                  errors.periods?.[index]?.annualInterestRate?.message
+                }
+                aria-invalid={
+                  errors.periods?.[index]?.annualInterestRate ? 'true' : 'false'
+                }
+                aria-describedby={`periods[${index}].annualInterestRate`}
+                min='0'
+                step='0.01'
+              />
             </div>
-            <TextInput
-              id='fixedRate'
-              addon='%'
-              type='number'
-              {...register('fixedRate')}
-              color={errors.fixedRate ? 'failure' : undefined}
-              helperText={errors.fixedRate?.message}
-              aria-invalid={errors.fixedRate ? 'true' : 'false'}
-              aria-describedby='fixedRate'
-              min='0'
-              step='0.01'
-            />
-          </div>
+          ))}
 
-          <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='fixedTerm' value='Plazo de la tasa fija' />
-            </div>
-            <TextInput
-              id='fixedTerm'
-              addon='Años'
-              type='number'
-              {...register('fixedTerm')}
-              color={errors.fixedTerm ? 'failure' : undefined}
-              helperText={errors.fixedTerm?.message}
-              aria-invalid={errors.fixedTerm ? 'true' : 'false'}
-              aria-describedby='fixedTerm'
-              min='0'
-            />
-          </div>
-          <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='variableRate' value='Tasa variable' />
-            </div>
-            <TextInput
-              id='variableRate'
-              addon='%'
-              type='number'
-              {...register('variableRate')}
-              color={errors.variableRate ? 'failure' : undefined}
-              helperText={errors.variableRate?.message}
-              aria-invalid={errors.variableRate ? 'true' : 'false'}
-              aria-describedby='variableRate'
-              min='0'
-              step='0.01'
-            />
-          </div>
-          <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='variableTerm' value='Plazo de la tasa variable' />
-            </div>
-            <TextInput
-              id='variableTerm'
-              addon='Años'
-              type='number'
-              disabled={true}
-              aria-describedby='variableTerm'
-              min='0'
-              value={getVariableTerm()}
-            />
-          </div>
           <div>
             <div className='mb-2 block'>
               <Label
@@ -224,8 +219,8 @@ const Home: NextPage = () => {
       </form>
       {loan && (
         <>
-          <LoanInfo {...loan}></LoanInfo>
-          <AmortizationTable {...loan} />
+          <LoanInfo loan={loan}></LoanInfo>
+          <AmortizationTable loan={loan} />
         </>
       )}
     </>

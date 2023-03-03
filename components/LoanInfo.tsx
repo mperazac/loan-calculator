@@ -9,59 +9,55 @@ import { Loan } from '@/types/loan';
 import Card from '@/components/common/Card';
 import * as React from 'react';
 
-type LoanInfoProps = Loan;
+type LoanInfoProps = {
+  loan: Loan;
+};
 
 const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
   const {
     principal,
-    fixedRate = 0,
-    fixedTerm = 0,
-    variableRate = 0,
-    termInYears,
+    periods,
+    totalTermInYears: termInYears,
     lifeInsurance = 0,
     fireInsurance = 0,
     jobLossInsurance = 0,
-    extraPayment = 0,
-  } = props;
+  } = props.loan;
   const totalInsurancePerMonth =
     lifeInsurance + fireInsurance + jobLossInsurance;
   return (
     <div className='mt-10 flex gap-5'>
-      <Card
-        label='Cuota mensual con tasa fija'
-        value={roundAndFormat(
-          calculateMonthlyPayment(principal, fixedRate, termInYears),
-        )}
-      />
-      {variableRate > 0 && (
-        <Card
-          label='Cuota mensual con tasa variable'
-          value={roundAndFormat(
-            calculateMonthlyPayment(principal, variableRate, termInYears),
+      {periods.map((period, index) => (
+        <>
+          <Card
+            key={index}
+            label={`Cuota mensual del periodo ${index + 1}`}
+            value={roundAndFormat(
+              calculateMonthlyPayment(
+                principal,
+                period.annualInterestRate,
+                termInYears,
+              ),
+            )}
+          />
+          {totalInsurancePerMonth > 0 && (
+            <Card
+              key={index}
+              label={`Cuota mensual con seguros del periodo ${index + 1}`}
+              value={roundAndFormat(
+                calculateMonthlyPayment(
+                  principal,
+                  period.annualInterestRate,
+                  period.termInYears,
+                ) + totalInsurancePerMonth,
+              )}
+            />
           )}
-        />
-      )}
-      {totalInsurancePerMonth > 0 && (
-        <Card
-          label='Cuota mensual con seguros'
-          value={roundAndFormat(
-            calculateMonthlyPayment(principal, fixedRate, termInYears) +
-              totalInsurancePerMonth,
-          )}
-        />
-      )}
+        </>
+      ))}
+
       <Card
         label='Total en intereses'
-        value={roundAndFormat(
-          calculateTotalInterest(
-            principal,
-            fixedRate,
-            variableRate,
-            fixedTerm,
-            termInYears - fixedTerm,
-            extraPayment,
-          ),
-        )}
+        value={roundAndFormat(calculateTotalInterest(props.loan))}
       />
 
       {totalInsurancePerMonth > 0 && (
@@ -80,14 +76,7 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
       <Card
         label='Total a pagar'
         value={roundAndFormat(
-          calculateTotalPayment(
-            principal,
-            fixedRate,
-            variableRate,
-            fixedTerm,
-            termInYears - fixedTerm,
-            extraPayment,
-          ) +
+          calculateTotalPayment(props.loan) +
             calculateTotalInsurancePayments(
               termInYears,
               lifeInsurance,
@@ -95,6 +84,7 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
               jobLossInsurance,
             ),
         )}
+        tooltip='Total a pagar incluyendo monto del préstamo, intereses y seguros'
       />
     </div>
   );

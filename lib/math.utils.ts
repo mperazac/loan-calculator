@@ -1,4 +1,5 @@
-import { AmortizationRow } from './../types/loan';
+import { AmortizationRow, Loan } from './../types/loan';
+
 const MONTHS_PER_YEAR = 12;
 
 export function round(x: number) {
@@ -22,45 +23,34 @@ export function calculateLoanTermInMonths(term: number) {
 }
 
 // Calculates the total interest of a loan
-export function calculateTotalInterest(
-  principal: number,
-  interestRate1: number,
-  interestRate2: number,
-  termInYears1: number,
-  termInYears2: number,
-  extraMonthlyPayment: number,
-) {
-  const totalTermInYears = termInYears1 + termInYears2;
-  const termInMonths1 = calculateLoanTermInMonths(termInYears1);
-  const totalTermInMonths = calculateLoanTermInMonths(totalTermInYears);
-  const monthlyPayment1 = calculateMonthlyPayment(
-    principal,
-    interestRate1,
-    totalTermInYears,
-  );
-  const monthlyPayment2 = calculateMonthlyPayment(
-    principal,
-    interestRate2,
-    totalTermInYears,
-  );
+export function calculateTotalInterest(loan: Loan) {
+  const { principal, extraPayment = 0, periods, totalTermInYears } = loan;
   let totalInterest = 0;
   let balance = principal;
+  let termInYearsLeft = totalTermInYears;
 
-  for (let i = 0; i < totalTermInMonths && balance > 0; i++) {
-    const interestRate = i < termInMonths1 ? interestRate1 : interestRate2;
-    const monthlyPayment =
-      i < termInMonths1 ? monthlyPayment1 : monthlyPayment2;
-    const interest = balance * (interestRate / 100 / 12);
-    const payment = monthlyPayment + extraMonthlyPayment;
-    if (payment > balance + interest) {
+  periods.forEach(period => {
+    const { termInYears, annualInterestRate } = period;
+    const termInMonths = calculateLoanTermInMonths(termInYears);
+    const monthlyPayment = calculateMonthlyPayment(
+      balance,
+      annualInterestRate,
+      termInYearsLeft,
+    );
+    termInYearsLeft -= termInYears;
+    const monthlyRate = calculateMonthlyInterestRate(annualInterestRate);
+
+    for (let i = 0; i < termInMonths && balance > 0; i++) {
+      const interest = balance * monthlyRate;
+      const payment = monthlyPayment + extraPayment;
       totalInterest += interest;
-      break;
+      if (payment > balance + interest) {
+        break;
+      }
+      const principalPayment = payment - interest;
+      balance -= principalPayment;
     }
-    const principalPaid = payment - interest;
-    balance -= principalPaid;
-    totalInterest += interest;
-  }
-  console.log('totalInterest', totalInterest);
+  });
   return totalInterest;
 }
 
@@ -80,128 +70,87 @@ export function calculateMonthlyPayment(
 }
 
 // Calculates the total payment of a loan
-export function old_calculateTotalPayment(
-  principal: number,
-  interestRate: number,
-  termInYears: number,
-  extraMonthlyPayment: number,
-) {
-  const termInMonths = calculateLoanTermInMonths(termInYears);
-  const monthlyPayment = calculateMonthlyPayment(
-    principal,
-    interestRate,
-    termInYears,
-  );
-  if (extraMonthlyPayment > 0) {
-    let totalPaid = 0;
-    let balance = principal;
+export function calculateTotalPayment(loan: Loan) {
+  const { principal, extraPayment = 0, periods, totalTermInYears } = loan;
+  let totalPayment = 0;
+  let balance = principal;
+  let termInYearsLeft = totalTermInYears;
+
+  periods.forEach(period => {
+    const { termInYears, annualInterestRate } = period;
+    const termInMonths = calculateLoanTermInMonths(termInYears);
+    const monthlyPayment = calculateMonthlyPayment(
+      balance,
+      annualInterestRate,
+      termInYearsLeft,
+    );
+    termInYearsLeft -= termInYears;
+    const monthlyRate = calculateMonthlyInterestRate(annualInterestRate);
 
     for (let i = 0; i < termInMonths && balance > 0; i++) {
-      const interest = balance * (interestRate / 100 / 12);
-      const payment = monthlyPayment + extraMonthlyPayment;
+      const interest = balance * monthlyRate;
+      const payment = monthlyPayment + extraPayment;
       if (payment > balance + interest) {
-        totalPaid += balance + interest;
+        totalPayment += balance + interest;
         break;
       }
-      const principalPaid = payment - interest;
-      totalPaid += payment;
-      balance -= principalPaid;
+      const principalPayment = payment - interest;
+      balance -= principalPayment;
+      totalPayment += payment;
     }
+  });
 
-    return totalPaid;
-  }
-  const totalPayment = monthlyPayment * termInMonths;
   return totalPayment;
 }
 
-// Calculates the total payment of a loan with two interest rates
-export function calculateTotalPayment(
-  principal: number,
-  interestRate1: number,
-  interestRate2: number,
-  termInYears1: number,
-  termInYears2: number,
-  extraMonthlyPayment: number,
-) {
-  const totalTermInYears = termInYears1 + termInYears2;
-  const termInMonths1 = calculateLoanTermInMonths(termInYears1);
-  const totalTermInMonths = calculateLoanTermInMonths(totalTermInYears);
-  const monthlyPayment1 = calculateMonthlyPayment(
-    principal,
-    interestRate1,
-    totalTermInYears,
-  );
-  const monthlyPayment2 = calculateMonthlyPayment(
-    principal,
-    interestRate2,
-    totalTermInYears,
-  );
-  let totalPaid = 0;
-  let balance = principal;
-
-  for (let i = 0; i < totalTermInMonths && balance > 0; i++) {
-    const interestRate = i < termInMonths1 ? interestRate1 : interestRate2;
-    const monthlyPayment =
-      i < termInMonths1 ? monthlyPayment1 : monthlyPayment2;
-    const interest = balance * (interestRate / 100 / 12);
-    const payment = monthlyPayment + extraMonthlyPayment;
-    if (payment > balance + interest) {
-      totalPaid += balance + interest;
-      break;
-    }
-    const principalPaid = payment - interest;
-    totalPaid += payment;
-    balance -= principalPaid;
-  }
-
-  return totalPaid;
-}
-
 // Generates a table of monthly payments for a loan
-export function generateAmortizationSchedule(
-  principal: number,
-  interestRate: number,
-  termInYears: number,
-  extraMonthlyPayment?: number,
-): AmortizationRow[] {
-  const data = [];
-  const monthlyRate = calculateMonthlyInterestRate(interestRate);
-  const numberOfPayments = calculateLoanTermInMonths(termInYears);
-  const monthlyPayment = calculateMonthlyPayment(
-    principal,
-    interestRate,
-    termInYears,
-    extraMonthlyPayment,
-  );
+export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
+  const data: AmortizationRow[] = [];
+  const { principal, periods, totalTermInYears, extraPayment = 0 } = loan;
   let balance = principal;
   let totalInterest = 0;
-  for (let i = 0; i < numberOfPayments; i++) {
-    const interest = balance * monthlyRate;
-    if (monthlyPayment > balance + interest) {
+  let termInYearsLeft = totalTermInYears;
+
+  periods.forEach(period => {
+    const { termInYears, annualInterestRate } = period;
+    const termInMonths = calculateLoanTermInMonths(termInYears);
+    const monthlyPayment = calculateMonthlyPayment(
+      balance,
+      annualInterestRate,
+      termInYearsLeft,
+    );
+    termInYearsLeft -= termInYears;
+    const monthlyRate = calculateMonthlyInterestRate(annualInterestRate);
+
+    for (let i = 0; i < termInMonths; i++) {
+      const interest = balance * monthlyRate;
+      const payment = monthlyPayment + extraPayment;
+      totalInterest += interest;
+      if (payment > balance + interest) {
+        data.push({
+          month: i + 1,
+          startingBalance: balance,
+          payment: balance + interest,
+          interest,
+          principal: balance,
+          endingBalance: 0,
+          totalInterest,
+        });
+        break;
+      }
+      const principalPayment = payment - interest;
+      balance -= principalPayment;
       data.push({
         month: i + 1,
-        startingBalance: balance,
-        payment: balance + interest,
+        startingBalance: balance + principalPayment,
+        payment,
         interest,
-        principal: balance,
-        endingBalance: 0,
-        totalInterest: totalInterest + interest,
+        principal: principalPayment,
+        endingBalance: balance,
+        totalInterest,
       });
-      break;
     }
-    const principal = monthlyPayment - interest;
-    balance = balance - principal;
-    totalInterest += interest;
-    data.push({
-      month: i + 1,
-      startingBalance: balance + principal,
-      payment: monthlyPayment,
-      interest,
-      principal,
-      endingBalance: balance,
-      totalInterest,
-    });
-  }
+  });
   return data;
 }
 
