@@ -8,7 +8,6 @@ interface IMonthlyPaymentCardProps {
   principal: Loan['principal'];
   termInYears: Loan['totalTermInYears'];
   totalInsurancePerMonth: number;
-  extraPayment: Loan['extraPayment'];
   index: number;
 }
 
@@ -18,19 +17,19 @@ const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
   principal,
   termInYears,
   totalInsurancePerMonth,
-  extraPayment = 0,
 }) => {
   const monthlyPayment = calculateMonthlyPayment(
     principal,
     period.annualInterestRate,
     termInYears,
   );
+  const periodExtraPayment = period.extraPayment || 0;
   return (
     <Card
       key={index}
       label={`Cuota mensual del periodo ${index + 1}`}
       value={roundAndFormat(
-        monthlyPayment + totalInsurancePerMonth + extraPayment,
+        monthlyPayment + totalInsurancePerMonth + periodExtraPayment,
       )}
       subText={
         <div className='gap-0'>
@@ -40,8 +39,8 @@ const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
           {totalInsurancePerMonth > 0 && (
             <p>+ {roundAndFormat(totalInsurancePerMonth)} seguros</p>
           )}
-          {extraPayment > 0 && (
-            <p>+ {roundAndFormat(extraPayment)} pago extra</p>
+          {periodExtraPayment > 0 && (
+            <p>+ {roundAndFormat(periodExtraPayment)} pago extra</p>
           )}
         </div>
       }

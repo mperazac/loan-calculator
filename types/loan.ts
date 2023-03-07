@@ -24,9 +24,9 @@ export const LoanSchema = z
             required_error: 'Requerido',
           })
           .min(0),
+        extraPayment: z.coerce.number().min(0).optional(),
       }),
     ),
-    extraPayment: z.coerce.number().min(0).optional(),
     lifeInsurance: z.coerce.number().min(0).optional(),
     fireInsurance: z.coerce.number().min(0).optional(),
     jobLossInsurance: z.coerce.number().min(0).optional(),

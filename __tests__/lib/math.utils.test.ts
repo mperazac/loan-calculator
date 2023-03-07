@@ -48,15 +48,37 @@ describe('Test all math operations', () => {
     expect(result).toBe(213069.97182291475);
   });
   it('calculates the total interest with extra monthly payments', () => {
-    const result = calculateTotalInterest({ ...loan, extraPayment: 200 });
-    expect(result).toBe(108458.96960231283);
+    const loanWithExtraPayment: Loan = {
+      principal: 125000,
+      totalTermInYears: 30,
+      periods: [
+        {
+          termInYears: 30,
+          annualInterestRate: 8.25,
+          extraPayment: 200,
+        },
+      ],
+    };
+    const result = calculateTotalInterest(loanWithExtraPayment);
+    expect(round(result)).toBe(108458.97);
   });
   it('calculates the total loan payment', () => {
     const result = calculateTotalPayment(loan);
     expect(round(result)).toBe(338069.97);
   });
   it('calculates the total loan payment with extra montly payments', () => {
-    const result = calculateTotalPayment({ ...loan, extraPayment: 200 });
+    const loanWithExtraPayment: Loan = {
+      principal: 125000,
+      totalTermInYears: 30,
+      periods: [
+        {
+          termInYears: 30,
+          annualInterestRate: 8.25,
+          extraPayment: 200,
+        },
+      ],
+    };
+    const result = calculateTotalPayment(loanWithExtraPayment);
     expect(round(result)).toBe(233458.97);
   });
   it('generates a table of monthly payments', () => {
@@ -75,12 +97,12 @@ describe('Test all math operations', () => {
     const lifeInsurance = 120;
     const fireInsurance = 140;
     const jobLossInsurance = 100;
-    const result = calculateTotalInsurancePayments(
-      loan.totalTermInYears,
+    const result = calculateTotalInsurancePayments({
+      ...loan,
       lifeInsurance,
       fireInsurance,
       jobLossInsurance,
-    );
+    });
     expect(result).toBe(129600);
   });
 });

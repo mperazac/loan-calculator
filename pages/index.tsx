@@ -1,7 +1,7 @@
 import AmortizationTable from '@/components/AmortizationTable';
-import Card from '@/components/common/Card';
 import LoanInfo from '@/components/LoanInfo';
-import { Loan, LoanSchema } from '@/types/loan';
+import type { Loan } from '@/types/loan';
+import { LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Label, TextInput } from 'flowbite-react';
 import type { NextPage } from 'next';
@@ -23,17 +23,19 @@ const Home: NextPage = () => {
         {
           termInYears: 1,
           annualInterestRate: 5.1,
+          extraPayment: 0,
         },
         {
           termInYears: 2,
           annualInterestRate: 6.6,
+          extraPayment: 0,
         },
         {
           termInYears: 27,
           annualInterestRate: 8.3,
+          extraPayment: 0,
         },
       ],
-      extraPayment: 0,
       lifeInsurance: 54,
       fireInsurance: 22,
       jobLossInsurance: 0,
@@ -146,6 +148,31 @@ const Home: NextPage = () => {
                   step='0.01'
                 />
               </div>
+              <div>
+                <div className='mb-2 block'>
+                  <Label
+                    htmlFor={`periods[${index}].extraPayment`}
+                    value='Pago mensual extraordinario (opcional)'
+                  />
+                </div>
+                <TextInput
+                  id={`periods[${index}].extraPayment`}
+                  addon='$'
+                  type='number'
+                  {...register(`periods.${index}.extraPayment` as const)}
+                  color={
+                    errors.periods?.[index]?.extraPayment
+                      ? 'failure'
+                      : undefined
+                  }
+                  helperText={errors.periods?.[index]?.extraPayment?.message}
+                  aria-invalid={
+                    errors.periods?.[index]?.extraPayment ? 'true' : 'false'
+                  }
+                  aria-describedby='extraPayment'
+                  min='0'
+                />
+              </div>
             </div>
           ))}
 
@@ -210,25 +237,6 @@ const Home: NextPage = () => {
                 step='0.01'
               />
             </div>
-          </div>
-          <div>
-            <div className='mb-2 block'>
-              <Label
-                htmlFor='extraPayment'
-                value='Pago mensual extraordinario (opcional)'
-              />
-            </div>
-            <TextInput
-              id='extraPayment'
-              addon='$'
-              type='number'
-              {...register('extraPayment')}
-              color={errors.extraPayment ? 'failure' : undefined}
-              helperText={errors.extraPayment?.message}
-              aria-invalid={errors.extraPayment ? 'true' : 'false'}
-              aria-describedby='extraPayment'
-              min='0'
-            />
           </div>
         </div>
         <Button type='submit'>Calcular</Button>

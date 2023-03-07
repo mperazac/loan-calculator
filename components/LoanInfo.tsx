@@ -21,7 +21,6 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
     lifeInsurance = 0,
     fireInsurance = 0,
     jobLossInsurance = 0,
-    extraPayment = 0,
   } = props.loan;
   const totalInsurancePerMonth =
     lifeInsurance + fireInsurance + jobLossInsurance;
@@ -35,7 +34,6 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
           principal={principal}
           termInYears={termInYears}
           totalInsurancePerMonth={totalInsurancePerMonth}
-          extraPayment={extraPayment}
         />
       ))}
 
