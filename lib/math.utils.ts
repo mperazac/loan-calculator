@@ -157,15 +157,40 @@ export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
 }
 
 // Calculate the total payments for insurances in a loan
-export function calculateTotalInsurancePayments(
-  termInYears: number,
-  lifeInsurance = 0,
-  fireInsurance = 0,
-  jobLossInsurance = 0,
-) {
-  return (
-    termInYears *
-    MONTHS_PER_YEAR *
-    (lifeInsurance + fireInsurance + jobLossInsurance)
-  );
+export function calculateTotalInsurancePayments(loan: Loan) {
+  const {
+    lifeInsurance = 0,
+    fireInsurance = 0,
+    jobLossInsurance = 0,
+    periods,
+    extraPayment = 0,
+    totalTermInYears,
+    principal,
+  } = loan;
+  let totalInsurance = 0;
+  let balance = principal;
+  let termInYearsLeft = totalTermInYears;
+  periods.forEach(period => {
+    const { termInYears, annualInterestRate } = period;
+    const termInMonths = calculateLoanTermInMonths(termInYears);
+    const monthlyPayment = calculateMonthlyPayment(
+      balance,
+      annualInterestRate,
+      termInYearsLeft,
+    );
+    termInYearsLeft -= termInYears;
+    const monthlyRate = calculateMonthlyInterestRate(annualInterestRate);
+
+    for (let i = 0; i < termInMonths; i++) {
+      const interest = balance * monthlyRate;
+      const payment = monthlyPayment + extraPayment;
+      totalInsurance += lifeInsurance + fireInsurance + jobLossInsurance;
+      if (payment > balance + interest) {
+        break;
+      }
+      const principalPayment = payment - interest;
+      balance -= principalPayment;
+    }
+  });
+  return totalInsurance;
 }

@@ -5,10 +5,11 @@ interface ICardProps {
   label: string;
   tooltip?: string;
   value: string;
+  subText?: string | JSX.Element;
 }
 
 const Card: React.FunctionComponent<ICardProps> = props => {
-  const { label, tooltip, value } = props;
+  const { label, tooltip, value, subText } = props;
   return (
     <FlowbiteCard className='w-60'>
       <h5 className='text-sm font-bold text-gray-700 tracking-tight  dark:text-white uppercase inline-flex gap-4'>
@@ -33,6 +34,10 @@ const Card: React.FunctionComponent<ICardProps> = props => {
         )}
       </h5>
       <p className='text-2xl text-gray-900 dark:text-gray-400'>{value}</p>
+      {subText && typeof subText === 'string' && (
+        <p className='text-sm text-gray-500 dark:text-gray-300'>{subText}</p>
+      )}
+      {subText && typeof subText !== 'string' && subText}
     </FlowbiteCard>
   );
 };

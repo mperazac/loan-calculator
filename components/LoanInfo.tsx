@@ -1,5 +1,4 @@
 import {
-  calculateMonthlyPayment,
   calculateTotalInsurancePayments,
   calculateTotalInterest,
   calculateTotalPayment,
@@ -8,6 +7,7 @@ import {
 import { Loan } from '@/types/loan';
 import Card from '@/components/common/Card';
 import * as React from 'react';
+import MonthlyPaymentCard from './Cards/MonthlyPaymentCard';
 
 type LoanInfoProps = {
   loan: Loan;
@@ -21,38 +21,22 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
     lifeInsurance = 0,
     fireInsurance = 0,
     jobLossInsurance = 0,
+    extraPayment = 0,
   } = props.loan;
   const totalInsurancePerMonth =
     lifeInsurance + fireInsurance + jobLossInsurance;
   return (
     <div className='mt-10 flex gap-5'>
       {periods.map((period, index) => (
-        <>
-          <Card
-            key={index}
-            label={`Cuota mensual del periodo ${index + 1}`}
-            value={roundAndFormat(
-              calculateMonthlyPayment(
-                principal,
-                period.annualInterestRate,
-                termInYears,
-              ),
-            )}
-          />
-          {totalInsurancePerMonth > 0 && (
-            <Card
-              key={index}
-              label={`Cuota mensual con seguros del periodo ${index + 1}`}
-              value={roundAndFormat(
-                calculateMonthlyPayment(
-                  principal,
-                  period.annualInterestRate,
-                  period.termInYears,
-                ) + totalInsurancePerMonth,
-              )}
-            />
-          )}
-        </>
+        <MonthlyPaymentCard
+          period={period}
+          key={index}
+          index={index}
+          principal={principal}
+          termInYears={termInYears}
+          totalInsurancePerMonth={totalInsurancePerMonth}
+          extraPayment={extraPayment}
+        />
       ))}
 
       <Card
@@ -63,26 +47,14 @@ const LoanInfo: React.FunctionComponent<LoanInfoProps> = props => {
       {totalInsurancePerMonth > 0 && (
         <Card
           label='Total en seguros'
-          value={roundAndFormat(
-            calculateTotalInsurancePayments(
-              termInYears,
-              lifeInsurance,
-              fireInsurance,
-              jobLossInsurance,
-            ),
-          )}
+          value={roundAndFormat(calculateTotalInsurancePayments(props.loan))}
         />
       )}
       <Card
         label='Total a pagar'
         value={roundAndFormat(
           calculateTotalPayment(props.loan) +
-            calculateTotalInsurancePayments(
-              termInYears,
-              lifeInsurance,
-              fireInsurance,
-              jobLossInsurance,
-            ),
+            calculateTotalInsurancePayments(props.loan),
         )}
         tooltip='Total a pagar incluyendo monto del préstamo, intereses y seguros'
       />
