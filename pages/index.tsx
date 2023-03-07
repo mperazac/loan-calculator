@@ -31,7 +31,7 @@ const Home: NextPage = () => {
           extraPayment: 0,
         },
         {
-          termInYears: 27,
+          termInYears: 17,
           annualInterestRate: 8.3,
           extraPayment: 0,
         },

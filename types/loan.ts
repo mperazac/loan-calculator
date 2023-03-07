@@ -46,6 +46,16 @@ export const LoanSchema = z
         });
       }
     });
+    if (totalTerm < data.totalTermInYears) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.too_small,
+        minimum: data.totalTermInYears,
+        type: 'number',
+        inclusive: true,
+        path: ['periods', data.periods.length - 1, 'termInYears'],
+        message: 'Plazo no puede ser menor que el plazo total del crédito',
+      });
+    }
   });
 
 export type Loan = z.infer<typeof LoanSchema>;
