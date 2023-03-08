@@ -25,16 +25,6 @@ const Home: NextPage = () => {
           annualInterestRate: 5.1,
           extraPayment: 0,
         },
-        {
-          termInYears: 2,
-          annualInterestRate: 6.6,
-          extraPayment: 0,
-        },
-        {
-          termInYears: 17,
-          annualInterestRate: 8.3,
-          extraPayment: 0,
-        },
       ],
       lifeInsurance: 54,
       fireInsurance: 22,
@@ -51,6 +41,19 @@ const Home: NextPage = () => {
     name: 'periods',
     control,
   });
+
+  function addPeriodToLoan() {
+    append({
+      termInYears: 0,
+      annualInterestRate: 0,
+      extraPayment: 0,
+    });
+  }
+
+  function removePeriodToLoan(index: number) {
+    remove(index);
+  }
+
   const onSubmit: SubmitHandler<Loan> = data => setLoan(data);
   return (
     <>
@@ -173,6 +176,15 @@ const Home: NextPage = () => {
                   min='0'
                 />
               </div>
+              {periods.length > 1 && (
+                <Button
+                  size='xs'
+                  onClick={() => removePeriodToLoan(index)}
+                  color='failure'
+                >
+                  X
+                </Button>
+              )}
             </div>
           ))}
 
@@ -239,7 +251,12 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        <Button type='submit'>Calcular</Button>
+        <div className='flex gap-4'>
+          <Button onClick={addPeriodToLoan} color='gray'>
+            Agregar periodo
+          </Button>
+          <Button type='submit'>Calcular</Button>
+        </div>
       </form>
       {loan && (
         <>
