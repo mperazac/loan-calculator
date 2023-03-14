@@ -3,7 +3,7 @@ import {
   calculateMonthlyPayment,
   calculateTotalInterest,
   calculateLoanTermInMonths,
-  calculateTotalPayment,
+  calculateTotalCost,
   generateAmortizationSchedule,
   round,
   calculateTotalInsurancePayments,
@@ -63,7 +63,7 @@ describe('Test all math operations', () => {
     expect(round(result)).toBe(108458.97);
   });
   it('calculates the total loan payment', () => {
-    const result = calculateTotalPayment(loan);
+    const result = calculateTotalCost(loan);
     expect(round(result)).toBe(338069.97);
   });
   it('calculates the total loan payment with extra montly payments', () => {
@@ -78,7 +78,7 @@ describe('Test all math operations', () => {
         },
       ],
     };
-    const result = calculateTotalPayment(loanWithExtraPayment);
+    const result = calculateTotalCost(loanWithExtraPayment);
     expect(round(result)).toBe(233458.97);
   });
   it('generates a table of monthly payments', () => {

@@ -1,9 +1,9 @@
-import AmortizationTable from '@/components/AmortizationTable';
-import LoanInfo from '@/components/LoanInfo';
-import type { Loan } from '@/types/loan';
+import CostCards from '@/components/CostCards';
+import useFetchData from '@/hooks/useFetchData';
+import type { Loan, LoanCalculations } from '@/types/loan';
 import { LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Label, TextInput } from 'flowbite-react';
+import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       totalTermInYears: 20,
       periods: [
         {
-          termInYears: 1,
+          termInYears: 20,
           annualInterestRate: 5.1,
           extraPayment: 0,
         },
@@ -41,6 +41,14 @@ const Home: NextPage = () => {
     name: 'periods',
     control,
   });
+  const { data, isLoading } = useFetchData<LoanCalculations>({
+    queryKey: ['calculate-loan', loan],
+    url: '/api/calculate-loan',
+    params: { ...loan },
+    reactQueryOptions: {
+      enabled: !!loan,
+    },
+  });
 
   function addPeriodToLoan() {
     append({
@@ -55,10 +63,11 @@ const Home: NextPage = () => {
   }
 
   const onSubmit: SubmitHandler<Loan> = data => setLoan(data);
+
   return (
     <>
       <h1 className='text-4xl font-bold text-center mb-16'>
-        Cálculadora de crédito
+        Calculadora de crédito
       </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='grid gap-6 mb-6 md:grid-cols-6'>
@@ -255,15 +264,17 @@ const Home: NextPage = () => {
           <Button onClick={addPeriodToLoan} color='gray'>
             Agregar periodo
           </Button>
-          <Button type='submit'>Calcular</Button>
+          <Button type='submit'>
+            {isLoading && (
+              <div className='mr-3'>
+                <Spinner size='sm' light={true} />
+              </div>
+            )}
+            Calcular
+          </Button>
         </div>
       </form>
-      {loan && (
-        <>
-          <LoanInfo loan={loan}></LoanInfo>
-          <AmortizationTable loan={loan} />
-        </>
-      )}
+      {data && <CostCards data={data} />}
     </>
   );
 };

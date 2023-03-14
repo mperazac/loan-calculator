@@ -70,12 +70,21 @@ export function calculateMonthlyPayment(
   return monthlyPayment + extraMonthlyPayment;
 }
 
-// Calculates the total payment of a loan
-export function calculateTotalPayment(loan: Loan) {
-  const { principal, periods, totalTermInYears } = loan;
+// Calculates the total cost of a loan
+export function calculateTotalCost(loan: Loan) {
+  const {
+    principal,
+    periods,
+    totalTermInYears,
+    fireInsurance = 0,
+    lifeInsurance = 0,
+    jobLossInsurance = 0,
+  } = loan;
   let totalPayment = 0;
   let balance = principal;
   let termInYearsLeft = totalTermInYears;
+  const monthlyInsurancePayment =
+    fireInsurance + lifeInsurance + jobLossInsurance;
 
   periods.forEach(period => {
     const { termInYears, annualInterestRate } = period;
@@ -98,7 +107,7 @@ export function calculateTotalPayment(loan: Loan) {
       }
       const principalPayment = payment - interest;
       balance -= principalPayment;
-      totalPayment += payment;
+      totalPayment += payment + monthlyInsurancePayment;
     }
   });
 
@@ -196,4 +205,33 @@ export function calculateTotalInsurancePayments(loan: Loan) {
     }
   });
   return totalInsurance;
+}
+
+// Create a single function to calculate all the values of a loan
+export function calculateLoan(loan: Loan) {
+  const totalCost = calculateTotalCost(loan);
+  const totalInterest = calculateTotalInterest(loan);
+  const totalInsurance = calculateTotalInsurancePayments(loan);
+  const amortizationSchedule = generateAmortizationSchedule(loan);
+  const totalInsurancePerMonth = totalInsurance / loan.totalTermInYears / 12;
+  const monthlyPaymentsPerPeriods = loan.periods.map(period => {
+    const { annualInterestRate } = period;
+    const monthlyPayment = calculateMonthlyPayment(
+      loan.principal,
+      annualInterestRate,
+      loan.totalTermInYears,
+    );
+    return {
+      monthlyPayment,
+      extraPayment: period.extraPayment || 0,
+    };
+  });
+  return {
+    amortizationSchedule,
+    monthlyPaymentsPerPeriods,
+    totalCost,
+    totalInsurance,
+    totalInterest,
+    totalInsurancePerMonth,
+  };
 }

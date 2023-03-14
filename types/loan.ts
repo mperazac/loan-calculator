@@ -1,3 +1,4 @@
+import { calculateLoan } from '@/lib/math.utils';
 import z from 'zod';
 
 export const LoanSchema = z
@@ -69,3 +70,5 @@ export type AmortizationRow = {
   endingBalance: number;
   totalInterest: number;
 };
+
+export type LoanCalculations = ReturnType<typeof calculateLoan>;
