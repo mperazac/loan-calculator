@@ -1,6 +1,6 @@
 import Card from '@/components/common/Card';
 import { roundAndFormat } from '@/lib/math.utils';
-import type { Loan, LoanCalculations } from '@/types/loan';
+import type { LoanCalculations } from '@/types/loan';
 import * as React from 'react';
 import MonthlyPaymentCard from './Cards/MonthlyPaymentCard';
 

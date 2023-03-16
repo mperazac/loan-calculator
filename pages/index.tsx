@@ -3,7 +3,15 @@ import useFetchData from '@/hooks/useFetchData';
 import type { Loan, LoanCalculations } from '@/types/loan';
 import { LoanSchema } from '@/types/loan';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Label, Spinner, TextInput } from 'flowbite-react';
+import { Label } from 'flowbite-react';
+import { TextInput, Button } from '@tremor/react';
+import {
+  ClockIcon,
+  CurrencyDollarIcon,
+  ReceiptPercentIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
@@ -77,15 +85,15 @@ const Home: NextPage = () => {
                 <Label htmlFor='termInYears' value='Plazo total del crédito' />
               </div>
               <TextInput
-                id='termInYears'
-                addon='Años'
-                type='number'
-                {...register('totalTermInYears')}
-                color={errors.totalTermInYears ? 'failure' : undefined}
-                helperText={errors.totalTermInYears?.message}
-                aria-invalid={errors.totalTermInYears ? 'true' : 'false'}
                 aria-describedby='termInYears'
-                min='0'
+                aria-invalid={errors.totalTermInYears ? 'true' : 'false'}
+                error={!!errors.totalTermInYears}
+                errorMessage={errors.totalTermInYears?.message}
+                icon={ClockIcon}
+                id='termInYears'
+                {...register('totalTermInYears')}
+                placeholder='En años'
+                type='number'
               />
             </div>
             <div>
@@ -94,11 +102,11 @@ const Home: NextPage = () => {
               </div>
               <TextInput
                 id='principal'
-                addon='$'
+                icon={CurrencyDollarIcon}
                 type='number'
                 {...register('principal')}
-                color={errors.principal ? 'failure' : undefined}
-                helperText={errors.principal?.message}
+                error={!!errors.principal}
+                errorMessage={errors.principal?.message}
                 aria-invalid={errors.principal ? 'true' : 'false'}
                 aria-describedby='principal'
                 min='0'
@@ -116,13 +124,12 @@ const Home: NextPage = () => {
                 </div>
                 <TextInput
                   id={`periods[${index}].termInYears`}
-                  addon='Años'
+                  icon={ClockIcon}
+                  placeholder='En años'
                   type='number'
                   {...register(`periods.${index}.termInYears` as const)}
-                  color={
-                    errors.periods?.[index]?.termInYears ? 'failure' : undefined
-                  }
-                  helperText={errors.periods?.[index]?.termInYears?.message}
+                  error={!!errors.periods?.[index]?.termInYears}
+                  errorMessage={errors.periods?.[index]?.termInYears?.message}
                   aria-invalid={
                     errors.periods?.[index]?.termInYears ? 'true' : 'false'
                   }
@@ -139,15 +146,11 @@ const Home: NextPage = () => {
                 </div>
                 <TextInput
                   id={`periods[${index}].annualInterestRate`}
-                  addon='%'
+                  icon={ReceiptPercentIcon}
                   type='number'
                   {...register(`periods.${index}.annualInterestRate` as const)}
-                  color={
-                    errors.periods?.[index]?.annualInterestRate
-                      ? 'failure'
-                      : undefined
-                  }
-                  helperText={
+                  error={!!errors.periods?.[index]?.annualInterestRate}
+                  errorMessage={
                     errors.periods?.[index]?.annualInterestRate?.message
                   }
                   aria-invalid={
@@ -169,15 +172,11 @@ const Home: NextPage = () => {
                 </div>
                 <TextInput
                   id={`periods[${index}].extraPayment`}
-                  addon='$'
+                  icon={CurrencyDollarIcon}
                   type='number'
                   {...register(`periods.${index}.extraPayment` as const)}
-                  color={
-                    errors.periods?.[index]?.extraPayment
-                      ? 'failure'
-                      : undefined
-                  }
-                  helperText={errors.periods?.[index]?.extraPayment?.message}
+                  error={!!errors.periods?.[index]?.extraPayment}
+                  errorMessage={errors.periods?.[index]?.extraPayment?.message}
                   aria-invalid={
                     errors.periods?.[index]?.extraPayment ? 'true' : 'false'
                   }
@@ -189,9 +188,10 @@ const Home: NextPage = () => {
                 <Button
                   size='xs'
                   onClick={() => removePeriodToLoan(index)}
-                  color='failure'
+                  variant='secondary'
+                  color='gray'
                 >
-                  X
+                  <TrashIcon className='h-3 w-3' />
                 </Button>
               )}
             </div>
@@ -207,11 +207,11 @@ const Home: NextPage = () => {
               </div>
               <TextInput
                 id='lifeInsurance'
-                addon='$'
+                icon={CurrencyDollarIcon}
                 type='number'
                 {...register('lifeInsurance')}
-                color={errors.lifeInsurance ? 'failure' : undefined}
-                helperText={errors.lifeInsurance?.message}
+                error={!!errors.lifeInsurance}
+                errorMessage={errors.lifeInsurance?.message}
                 aria-invalid={errors.lifeInsurance ? 'true' : 'false'}
                 aria-describedby='lifeInsurance'
                 min='0'
@@ -227,11 +227,11 @@ const Home: NextPage = () => {
               </div>
               <TextInput
                 id='fireInsurance'
-                addon='$'
+                icon={CurrencyDollarIcon}
                 type='number'
                 {...register('fireInsurance')}
-                color={errors.fireInsurance ? 'failure' : undefined}
-                helperText={errors.fireInsurance?.message}
+                error={!!errors.fireInsurance}
+                errorMessage={errors.fireInsurance?.message}
                 aria-invalid={errors.fireInsurance ? 'true' : 'false'}
                 aria-describedby='fireInsurance'
                 min='0'
@@ -247,11 +247,11 @@ const Home: NextPage = () => {
               </div>
               <TextInput
                 id='jobLossInsurance'
-                addon='$'
+                icon={CurrencyDollarIcon}
                 type='number'
                 {...register('jobLossInsurance')}
-                color={errors.jobLossInsurance ? 'failure' : undefined}
-                helperText={errors.jobLossInsurance?.message}
+                error={!!errors.jobLossInsurance}
+                errorMessage={errors.jobLossInsurance?.message}
                 aria-invalid={errors.jobLossInsurance ? 'true' : 'false'}
                 aria-describedby='jobLossInsurance'
                 min='0'
@@ -261,16 +261,11 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className='flex gap-4'>
-          <Button onClick={addPeriodToLoan} color='gray'>
+          <Button onClick={addPeriodToLoan} variant='secondary'>
             Agregar periodo
           </Button>
-          <Button type='submit'>
-            {isLoading && (
-              <div className='mr-3'>
-                <Spinner size='sm' light={true} />
-              </div>
-            )}
-            Calcular
+          <Button type='submit' loading={isLoading}>
+            {isLoading ? 'Calculando' : 'Calcular'}
           </Button>
         </div>
       </form>

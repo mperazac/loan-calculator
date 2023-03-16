@@ -1,4 +1,5 @@
 import { roundAndFormat } from '@/lib/math.utils';
+import { Text } from '@tremor/react';
 import * as React from 'react';
 import Card from '../common/Card';
 
@@ -24,15 +25,15 @@ const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
         monthlyPayment + totalInsurancePerMonth + extraPayment,
       )}
       subText={
-        <div className='gap-0'>
+        <div className='gap-0 mt-1'>
           {monthlyPayment > 0 && (
-            <p>+ {roundAndFormat(monthlyPayment)} cuota</p>
+            <Text>{roundAndFormat(monthlyPayment)} cuota</Text>
           )}
           {totalInsurancePerMonth > 0 && (
-            <p>+ {roundAndFormat(totalInsurancePerMonth)} seguros</p>
+            <Text>+ {roundAndFormat(totalInsurancePerMonth)} seguros</Text>
           )}
           {extraPayment > 0 && (
-            <p>+ {roundAndFormat(extraPayment)} pago extra</p>
+            <Text>+ {roundAndFormat(extraPayment)} pago extra</Text>
           )}
         </div>
       }
