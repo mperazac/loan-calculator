@@ -11,7 +11,7 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => (
       <title>Calculadora de crédito hipotecario</title>
       <meta name='description' content='Calculadora de crédito hipotecario' />
     </Head>
-    <main className={`p-8`}>{children}</main>
+    <main className='p-8 bg-gray-50'>{children}</main>
   </>
 );
 
