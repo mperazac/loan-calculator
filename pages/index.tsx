@@ -2,13 +2,10 @@ import CostCards from '@/components/CostCards';
 import LoanForm from '@/components/LoanForm';
 import useFetchData from '@/hooks/useFetchData';
 import type { Loan, LoanCalculations } from '@/types/loan';
-import { LoanSchema } from '@/types/loan';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Col, Grid } from '@tremor/react';
 
 import type { NextPage } from 'next';
 import { useState } from 'react';
-import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 const Home: NextPage = () => {
   const [loan, setLoan] = useState<Loan>();

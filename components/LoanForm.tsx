@@ -81,6 +81,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
               id='termInYears'
               {...register('totalTermInYears')}
               placeholder='En años'
+              // @ts-ignore
               type='number'
             />
           </div>
@@ -91,6 +92,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             <TextInput
               id='principal'
               icon={CurrencyDollarIcon}
+              // @ts-ignore
               type='number'
               {...register('principal')}
               error={!!errors.principal}
@@ -114,6 +116,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
                 id={`periods[${index}].termInYears`}
                 icon={ClockIcon}
                 placeholder='En años'
+                // @ts-ignore
                 type='number'
                 {...register(`periods.${index}.termInYears` as const)}
                 error={!!errors.periods?.[index]?.termInYears}
@@ -135,6 +138,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
               <TextInput
                 id={`periods[${index}].annualInterestRate`}
                 icon={ReceiptPercentIcon}
+                // @ts-ignore
                 type='number'
                 {...register(`periods.${index}.annualInterestRate` as const)}
                 error={!!errors.periods?.[index]?.annualInterestRate}
@@ -159,6 +163,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
               <TextInput
                 id={`periods[${index}].extraPayment`}
                 icon={CurrencyDollarIcon}
+                // @ts-ignore
                 type='number'
                 {...register(`periods.${index}.extraPayment` as const)}
                 error={!!errors.periods?.[index]?.extraPayment}
@@ -194,6 +199,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             <TextInput
               id='lifeInsurance'
               icon={CurrencyDollarIcon}
+              // @ts-ignore
               type='number'
               {...register('lifeInsurance')}
               error={!!errors.lifeInsurance}
@@ -214,6 +220,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             <TextInput
               id='fireInsurance'
               icon={CurrencyDollarIcon}
+              // @ts-ignore
               type='number'
               {...register('fireInsurance')}
               error={!!errors.fireInsurance}
@@ -234,6 +241,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             <TextInput
               id='jobLossInsurance'
               icon={CurrencyDollarIcon}
+              // @ts-ignore
               type='number'
               {...register('jobLossInsurance')}
               error={!!errors.jobLossInsurance}
