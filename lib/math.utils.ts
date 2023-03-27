@@ -137,7 +137,7 @@ export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
 
     for (let i = 0; i < termInMonths; i++) {
       const interest = balance * monthlyRate;
-      const payment = monthlyPayment + periodExtraPayment;
+      const payment = monthlyPayment + periodExtraPayment; // TODO: add insurance payments
       totalInterest += interest;
       month += 1;
       if (payment > balance + interest) {

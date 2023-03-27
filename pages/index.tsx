@@ -1,3 +1,6 @@
+import AmortizationTable from '@/components/AmortizationTable';
+import PaymentDetailChart from '@/components/charts/PaymentDetailChart';
+import AmortizationChart from '@/components/charts/AmortizationChart';
 import CostCards from '@/components/CostCards';
 import LoanForm from '@/components/LoanForm';
 import useFetchData from '@/hooks/useFetchData';
@@ -35,7 +38,14 @@ const Home: NextPage = () => {
         </Col>
       </Grid>
 
-      {data && <CostCards data={data} />}
+      {data && (
+        <div className='flex flex-col gap-4'>
+          <CostCards data={data} />
+          <AmortizationTable data={data.amortizationSchedule} />
+        </div>
+      )}
+      {loan && <PaymentDetailChart loan={loan} />}
+      {loan && <AmortizationChart loan={loan} />}
     </>
   );
 };
