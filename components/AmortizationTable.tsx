@@ -1,20 +1,29 @@
-import { generateAmortizationSchedule, roundAndFormat } from '@/lib/math.utils';
-import { AmortizationRow, Loan } from '@/types/loan';
+import { roundAndFormat } from '@/lib/math.utils';
+import { AmortizationRow } from '@/types/loan';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Table } from 'flowbite-react';
+import {
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  Title,
+} from '@tremor/react';
 import * as React from 'react';
 
 type IAmortizationTableProps = {
-  loan: Loan;
+  data: AmortizationRow[];
 };
 
 const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
-  loan,
+  data,
 }) => {
   const columnHelper = createColumnHelper<AmortizationRow>();
   const columns = React.useMemo(
@@ -51,10 +60,6 @@ const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
     [columnHelper],
   );
 
-  const data = React.useMemo(() => {
-    return generateAmortizationSchedule(loan);
-  }, [loan]);
-
   const table = useReactTable({
     data,
     columns,
@@ -62,36 +67,42 @@ const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
   });
 
   return (
-    <Table hoverable={true} className='mt-10'>
-      <Table.Head>
-        {table.getHeaderGroups().map(headerGroup => {
-          return headerGroup.headers.map(header => (
-            <Table.HeadCell key={header.id}>
-              {header.isPlaceholder
-                ? null
-                : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-            </Table.HeadCell>
-          ));
-        })}
-      </Table.Head>
-      <Table.Body className='divide-y'>
-        {table.getRowModel().rows.map(row => (
-          <Table.Row
-            className='bg-white dark:border-gray-700 dark:bg-gray-800'
-            key={row.id}
-          >
-            {row.getVisibleCells().map(cell => (
-              <Table.Cell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Table.Cell>
-            ))}
-          </Table.Row>
-        ))}
-      </Table.Body>
-    </Table>
+    <Card>
+      <Title>Tabla de amortización</Title>
+
+      <Table className='mt-10'>
+        <TableHead>
+          <TableRow>
+            {table.getHeaderGroups().map(headerGroup => {
+              return headerGroup.headers.map(header => (
+                <TableHeaderCell key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHeaderCell>
+              ));
+            })}
+          </TableRow>
+        </TableHead>
+        <TableBody className='divide-y'>
+          {table.getRowModel().rows.map(row => (
+            <TableRow
+              className='bg-white dark:border-gray-700 dark:bg-gray-800 hover:bg-gray-100 '
+              key={row.id}
+            >
+              {row.getVisibleCells().map(cell => (
+                <TableCell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 };
 
