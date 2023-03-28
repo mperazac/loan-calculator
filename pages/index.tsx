@@ -9,6 +9,7 @@ import { Card, Col, Grid } from '@tremor/react';
 
 import type { NextPage } from 'next';
 import { useState } from 'react';
+import TotalDonutChart from '@/components/charts/TotalDonutChart';
 
 const Home: NextPage = () => {
   const [loan, setLoan] = useState<Loan>();
@@ -41,9 +42,10 @@ const Home: NextPage = () => {
       {data && (
         <div className='flex flex-col gap-4'>
           <CostCards data={data} />
-          <AmortizationTable data={data.amortizationSchedule} />
+          {/* <AmortizationTable data={data.amortizationSchedule} /> */}
         </div>
       )}
+      {loan && data && <TotalDonutChart {...data} loanPrincipal={loan.principal} />}
       {loan && <PaymentDetailChart loan={loan} />}
       {loan && <AmortizationChart loan={loan} />}
     </>
