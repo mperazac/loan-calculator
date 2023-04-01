@@ -19,7 +19,7 @@ const Home: NextPage = () => {
   }
 
   return (
-    <>
+    <div className='min-h-screen flex justify-center items-center flex-col'>
       <h1 className='text-4xl font-bold text-center mb-16'>
         Calculadora de crédito
       </h1>
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
         </div>
       )}
       {/* {loan && data && <TotalDonutChart {...data} loanPrincipal={loan.principal} />} */}
-    </>
+    </div>
   );
 };
 
