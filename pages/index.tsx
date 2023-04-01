@@ -13,14 +13,6 @@ import TotalDonutChart from '@/components/charts/TotalDonutChart';
 
 const Home: NextPage = () => {
   const [loan, setLoan] = useState<Loan>();
-  const { data, isLoading } = useFetchData<LoanCalculations>({
-    queryKey: ['calculate-loan', loan],
-    url: '/api/calculate-loan',
-    params: { ...loan },
-    reactQueryOptions: {
-      enabled: !!loan,
-    },
-  });
 
   function handleSubmit(loan: Loan) {
     setLoan(loan);
@@ -34,20 +26,19 @@ const Home: NextPage = () => {
       <Grid numCols={1} numColsSm={3} numColsLg={6} className='gap-2'>
         <Col numColSpan={1} numColSpanLg={6}>
           <Card>
-            <LoanForm onSubmit={handleSubmit} isLoading={isLoading}></LoanForm>
+            <LoanForm onSubmit={handleSubmit} />
           </Card>
         </Col>
       </Grid>
 
-      {data && (
+      {loan && (
         <div className='flex flex-col gap-4'>
-          <CostCards data={data} />
-          {/* <AmortizationTable data={data.amortizationSchedule} /> */}
+          <CostCards loan={loan} />
+          <PaymentDetailChart loan={loan} />
+          <AmortizationTable loan={loan} />
         </div>
       )}
-      {loan && data && <TotalDonutChart {...data} loanPrincipal={loan.principal} />}
-      {loan && <PaymentDetailChart loan={loan} />}
-      {loan && <AmortizationChart loan={loan} />}
+      {/* {loan && data && <TotalDonutChart {...data} loanPrincipal={loan.principal} />} */}
     </>
   );
 };

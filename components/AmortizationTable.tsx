@@ -1,5 +1,6 @@
+import useFetchData from '@/hooks/useFetchData';
 import { roundAndFormat } from '@/lib/math.utils';
-import { AmortizationRow } from '@/types/loan';
+import { AmortizationRow, Loan } from '@/types/loan';
 import {
   createColumnHelper,
   flexRender,
@@ -19,12 +20,18 @@ import {
 import * as React from 'react';
 
 type IAmortizationTableProps = {
-  data: AmortizationRow[];
+  loan: Loan;
 };
 
 const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
-  data,
+  loan,
 }) => {
+  const { data = [], isLoading } = useFetchData<AmortizationRow[]>({
+    queryKey: ['calculate-amortization-table', loan],
+    url: '/api/calculate-amortization-table',
+    params: { ...loan },
+  });
+
   const columnHelper = createColumnHelper<AmortizationRow>();
   const columns = React.useMemo(
     () => [
@@ -65,6 +72,10 @@ const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  if (!data || isLoading) {
+    return null;
+  }
 
   return (
     <Card>

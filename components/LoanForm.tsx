@@ -13,7 +13,7 @@ import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 interface ILoanFormProps {
   onSubmit: (data: Loan) => void;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
@@ -26,17 +26,27 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
   } = useForm<Loan>({
     resolver: zodResolver(LoanSchema),
     defaultValues: {
-      principal: 153000,
+      principal: 157500,
       totalTermInYears: 20,
       periods: [
         {
-          termInYears: 20,
+          termInYears: 1,
           annualInterestRate: 5.1,
           extraPayment: 0,
         },
+        {
+          termInYears: 2,
+          annualInterestRate: 6.6,
+          extraPayment: 0,
+        },
+        {
+          termInYears: 17,
+          annualInterestRate: 8.3,
+          extraPayment: 0,
+        },
       ],
-      lifeInsurance: 54,
-      fireInsurance: 22,
+      lifeInsurance: 0,
+      fireInsurance: 0,
       jobLossInsurance: 0,
     },
     mode: 'onChange',

@@ -117,7 +117,14 @@ export function calculateTotalCost(loan: Loan) {
 // Generates a table of monthly payments for a loan
 export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
   const data: AmortizationRow[] = [];
-  const { principal, periods, totalTermInYears } = loan;
+  const {
+    principal,
+    periods,
+    totalTermInYears,
+    fireInsurance = 0,
+    lifeInsurance = 0,
+    jobLossInsurance = 0,
+  } = loan;
   let month = 0;
   let balance = principal;
   let totalInterest = 0;
@@ -134,10 +141,12 @@ export function generateAmortizationSchedule(loan: Loan): AmortizationRow[] {
     termInYearsLeft -= termInYears;
     const monthlyRate = calculateMonthlyInterestRate(annualInterestRate);
     const periodExtraPayment = period.extraPayment || 0;
+    const monthlyInsurancePayment =
+      fireInsurance + lifeInsurance + jobLossInsurance;
 
     for (let i = 0; i < termInMonths; i++) {
       const interest = balance * monthlyRate;
-      const payment = monthlyPayment + periodExtraPayment; // TODO: add insurance payments
+      const payment = monthlyPayment + periodExtraPayment;
       totalInterest += interest;
       month += 1;
       if (payment > balance + interest) {
@@ -212,7 +221,6 @@ export function calculateLoan(loan: Loan) {
   const totalCost = calculateTotalCost(loan);
   const totalInterest = calculateTotalInterest(loan);
   const totalInsurance = calculateTotalInsurancePayments(loan);
-  const amortizationSchedule = generateAmortizationSchedule(loan);
   const totalInsurancePerMonth = totalInsurance / loan.totalTermInYears / 12;
   const monthlyPaymentsPerPeriods = loan.periods.map(period => {
     const { annualInterestRate } = period;
@@ -227,11 +235,74 @@ export function calculateLoan(loan: Loan) {
     };
   });
   return {
-    amortizationSchedule,
     monthlyPaymentsPerPeriods,
     totalCost,
     totalInsurance,
     totalInterest,
     totalInsurancePerMonth,
+  };
+}
+
+export function calculateAllCards(loan: Loan) {
+  const {
+    principal,
+    periods,
+    totalTermInYears,
+    fireInsurance = 0,
+    lifeInsurance = 0,
+    jobLossInsurance = 0,
+  } = loan;
+  let totalInterest = 0;
+  let totalInsurance = 0;
+  let totalCost = 0;
+  let totalMonths = 0;
+  let balance = principal;
+  let termInYearsLeft = totalTermInYears;
+  const monthlyInsurancePayment =
+    fireInsurance + lifeInsurance + jobLossInsurance;
+  const monthlyPaymentsPerPeriods: {
+    payment: number;
+    extraPayment: number;
+  }[] = [];
+
+  periods.forEach(period => {
+    const { termInYears, annualInterestRate } = period;
+    const termInMonths = calculateLoanTermInMonths(termInYears);
+    const monthlyPayment = calculateMonthlyPayment(
+      balance,
+      annualInterestRate,
+      termInYearsLeft,
+    );
+    termInYearsLeft -= termInYears;
+    const monthlyRate = calculateMonthlyInterestRate(annualInterestRate);
+    const periodExtraPayment = period.extraPayment || 0;
+    monthlyPaymentsPerPeriods.push({
+      payment: monthlyPayment,
+      extraPayment: periodExtraPayment,
+    });
+
+    for (let i = 0; i < termInMonths && balance > 0; i++) {
+      const interest = balance * monthlyRate;
+      const payment = monthlyPayment + periodExtraPayment;
+      totalInsurance += lifeInsurance + fireInsurance + jobLossInsurance;
+      totalInterest += interest;
+      totalMonths += 1;
+      if (payment > balance + interest) {
+        totalCost += balance + interest;
+        break;
+      }
+      const principalPayment = payment - interest;
+      balance -= principalPayment;
+      totalCost += payment + monthlyInsurancePayment;
+    }
+  });
+
+  return {
+    totalCost,
+    totalInterest,
+    totalInsurance,
+    totalMonths,
+    monthlyPaymentsPerPeriods,
+    monthlyInsurancePayment,
   };
 }

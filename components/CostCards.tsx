@@ -1,23 +1,36 @@
 import Card from '@/components/common/Card';
-import { roundAndFormat } from '@/lib/math.utils';
-import type { LoanCalculations } from '@/types/loan';
+import useFetchData from '@/hooks/useFetchData';
+import { calculateAllCards, round, roundAndFormat } from '@/lib/math.utils';
+import type { Loan } from '@/types/loan';
 import * as React from 'react';
 import MonthlyPaymentCard from './Cards/MonthlyPaymentCard';
 
 type CostCardsProps = {
-  data: LoanCalculations;
+  loan: Loan;
 };
 
-const CostCards: React.FunctionComponent<CostCardsProps> = ({ data }) => {
+const CostCards: React.FunctionComponent<CostCardsProps> = ({ loan }) => {
+  const { data, isLoading } = useFetchData<
+    ReturnType<typeof calculateAllCards>
+  >({
+    queryKey: ['calculate-cards', loan],
+    url: '/api/calculate-cards',
+    params: { ...loan },
+  });
+
+  if (!data || isLoading) {
+    return null;
+  }
+
   return (
     <div className='mt-10 flex gap-5'>
       {data.monthlyPaymentsPerPeriods.map((mp, index) => (
         <MonthlyPaymentCard
           key={index}
           period={index + 1}
-          monthlyPayment={mp.monthlyPayment}
+          monthlyPayment={mp.payment}
           extraPayment={mp.extraPayment}
-          totalInsurancePerMonth={data.totalInsurancePerMonth}
+          totalInsurancePerMonth={data.monthlyInsurancePayment}
         />
       ))}
 
@@ -26,7 +39,7 @@ const CostCards: React.FunctionComponent<CostCardsProps> = ({ data }) => {
         value={roundAndFormat(data.totalInterest)}
       />
 
-      {data.totalInsurancePerMonth > 0 && (
+      {data.monthlyInsurancePayment > 0 && (
         <Card
           label='Total en seguros'
           value={roundAndFormat(data.totalInsurance)}
@@ -36,6 +49,10 @@ const CostCards: React.FunctionComponent<CostCardsProps> = ({ data }) => {
         label='Total a pagar'
         value={roundAndFormat(data.totalCost)}
         tooltip='Total a pagar incluyendo monto del préstamo, intereses y seguros'
+      />
+      <Card
+        label='Años para pagar'
+        value={round(data.totalMonths / 12).toString()}
       />
     </div>
   );

@@ -11,6 +11,5 @@ export default function handler(
   let loanParse = qs.parse(queryLoan as Record<string, string>);
   let loan = LoanSchema.parse(loanParse);
   const results = getAmortizationChartData(loan);
-  console.log(results);
   res.status(200).json(results);
 }
