@@ -19,18 +19,19 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className='min-h-screen flex justify-center items-center flex-col'>
-      <h1 className='text-4xl font-bold text-center mb-16'>
-        Calculadora de crédito
-      </h1>
-      <Grid numCols={1} numColsSm={3} numColsLg={6} className='gap-2'>
-        <Col numColSpan={1} numColSpanLg={6}>
+    <>
+      <div className='min-h-screen flex justify-center items-center flex-col'>
+        <h1 className='text-4xl font-bold text-center mb-16'>
+          Calculadora de crédito
+        </h1>
+        <Grid numCols={1} numColsSm={3} numColsLg={6} className='gap-2'>
+          {/* <Col numColSpan={1} numColSpanLg={6}> */}
           <Card>
             <LoanForm onSubmit={handleSubmit} />
           </Card>
-        </Col>
-      </Grid>
-
+          {/* </Col> */}
+        </Grid>
+      </div>
       {loan && (
         <div className='flex flex-col gap-4'>
           <CostCards loan={loan} />
@@ -39,7 +40,7 @@ const Home: NextPage = () => {
         </div>
       )}
       {/* {loan && data && <TotalDonutChart {...data} loanPrincipal={loan.principal} />} */}
-    </div>
+    </>
   );
 };
 

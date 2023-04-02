@@ -4,6 +4,7 @@ import { calculateAllCards, round, roundAndFormat } from '@/lib/math.utils';
 import type { Loan } from '@/types/loan';
 import * as React from 'react';
 import MonthlyPaymentCard from './Cards/MonthlyPaymentCard';
+import DebtTermCard from './Cards/DebtTermCard';
 
 type CostCardsProps = {
   loan: Loan;
@@ -50,10 +51,7 @@ const CostCards: React.FunctionComponent<CostCardsProps> = ({ loan }) => {
         value={roundAndFormat(data.totalCost)}
         tooltip='Total a pagar incluyendo monto del préstamo, intereses y seguros'
       />
-      <Card
-        label='Años para pagar'
-        value={round(data.totalMonths / 12).toString()}
-      />
+      <DebtTermCard totalMonths={data.totalMonths} />
     </div>
   );
 };
