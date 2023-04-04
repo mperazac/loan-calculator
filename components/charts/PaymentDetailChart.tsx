@@ -38,7 +38,7 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
           categories={['principal', 'interest']}
           colors={['emerald', 'rose']}
           valueFormatter={roundAndFormat}
-          yAxisWidth={48}
+          yAxisWidth={75}
           stack
         />
       )}

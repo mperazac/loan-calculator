@@ -24,16 +24,16 @@ const Card: React.FunctionComponent<ICardProps> = props => {
   }
 
   return (
-    <TremorCard className='max-w-xs mx-auto'>
-      <Title className='flex gap-2 items-center'>
-        {label}{' '}
-        {tooltip && (
-          <Tooltip content={tooltip}>
-            <QuestionMarkCircleIcon className='h-5 w-5' />
-          </Tooltip>
-        )}
+    <TremorCard decoration='top' decorationColor='indigo'>
+      <Title className='flex gap-2 items-center text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light'>
+        {label}
       </Title>
-      <Metric>{value}</Metric>
+      {tooltip && (
+        <Tooltip content={tooltip}>
+          <QuestionMarkCircleIcon className='h-5 w-5' />
+        </Tooltip>
+      )}
+      <Metric className='text-lg lg:text-3xl'>{value}</Metric>
       {renderSubtext()}
     </TremorCard>
   );

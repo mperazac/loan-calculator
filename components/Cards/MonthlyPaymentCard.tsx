@@ -26,7 +26,7 @@ const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
       )}
       subText={
         <div className='gap-0 mt-1'>
-          {totalInsurancePerMonth !== 0 && extraPayment !== 0 && (
+          {totalInsurancePerMonth > 0 || extraPayment > 0 && (
             <Text>{roundAndFormat(monthlyPayment)} cuota</Text>
           )}
           {totalInsurancePerMonth > 0 && (

@@ -13,7 +13,6 @@ import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 interface ILoanFormProps {
   onSubmit: (data: Loan) => void;
-  isLoading?: boolean;
 }
 
 const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
@@ -75,7 +74,10 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
   const onSubmit: SubmitHandler<Loan> = data => props.onSubmit(data);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className='p-4 md:p-10 bg-white border rounded-lg'
+    >
       <div className='grid gap-6 mb-6 md:grid-cols-6'>
         <div className='space-y-6'>
           <div>
@@ -264,7 +266,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
           </div>
         </div>
       </div>
-      <div className='flex gap-4'>
+      <div className='flex gap-4 justify-end'>
         <Button
           onClick={addPeriodToLoan}
           variant='secondary'
@@ -272,9 +274,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
         >
           Agregar periodo
         </Button>
-        <Button type='submit' loading={props.isLoading}>
-          {props.isLoading ? 'Calculando' : 'Calcular'}
-        </Button>
+        <Button type='submit'>Calcular</Button>
       </div>
     </form>
   );

@@ -1,12 +1,15 @@
 import useFetchData from '@/hooks/useFetchData';
 import { getAmortizationChartData } from '@/lib/chart.utils';
-import { roundAndFormat } from '@/lib/math.utils';
 import { Loan } from '@/types/loan';
-import { Card, Title, AreaChart } from '@tremor/react';
+import { Card, LineChart, Title } from '@tremor/react';
 
 interface IAmortizationChartProps {
   loan: Loan;
 }
+
+const dataFormatter = (number: number) => {
+  return '$ ' + Intl.NumberFormat('us').format(number).toString();
+};
 
 const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
   loan,
@@ -31,13 +34,14 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
       <Title>Pago de amortización y de intereses</Title>
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
-        <AreaChart
+        <LineChart
           className='h-72 mt-4'
           data={data}
           index='year'
-          categories={['totalInterest', 'endingBalance']}
+          categories={['Interes', 'Saldo Capital', 'Cuota']}
           colors={['slate', 'indigo']}
-          valueFormatter={roundAndFormat}
+          valueFormatter={dataFormatter}
+          yAxisWidth={75}
         />
       )}
     </Card>

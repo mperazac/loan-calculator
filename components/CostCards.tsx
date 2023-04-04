@@ -1,10 +1,10 @@
 import Card from '@/components/common/Card';
 import useFetchData from '@/hooks/useFetchData';
-import { calculateAllCards, round, roundAndFormat } from '@/lib/math.utils';
+import { calculateAllCards, roundAndFormat } from '@/lib/math.utils';
 import type { Loan } from '@/types/loan';
 import * as React from 'react';
-import MonthlyPaymentCard from './Cards/MonthlyPaymentCard';
 import DebtTermCard from './Cards/DebtTermCard';
+import MonthlyPaymentCard from './Cards/MonthlyPaymentCard';
 
 type CostCardsProps = {
   loan: Loan;
@@ -24,7 +24,7 @@ const CostCards: React.FunctionComponent<CostCardsProps> = ({ loan }) => {
   }
 
   return (
-    <div className='mt-10 flex gap-5'>
+    <>
       {data.monthlyPaymentsPerPeriods.map((mp, index) => (
         <MonthlyPaymentCard
           key={index}
@@ -52,7 +52,7 @@ const CostCards: React.FunctionComponent<CostCardsProps> = ({ loan }) => {
         tooltip='Total a pagar incluyendo monto del préstamo, intereses y seguros'
       />
       <DebtTermCard totalMonths={data.totalMonths} />
-    </div>
+    </>
   );
 };
 

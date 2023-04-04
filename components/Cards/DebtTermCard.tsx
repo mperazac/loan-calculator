@@ -1,5 +1,3 @@
-import { roundAndFormat } from '@/lib/math.utils';
-import { Text } from '@tremor/react';
 import * as React from 'react';
 import Card from '../common/Card';
 

@@ -1,36 +1,48 @@
-import { roundAndFormat } from '@/lib/math.utils';
-import { Card, Title, DonutChart } from '@tremor/react';
+import useFetchData from '@/hooks/useFetchData';
+import { calculateAllCards, roundAndFormat } from '@/lib/math.utils';
+import { Loan } from '@/types/loan';
+import { Card, DonutChart, Title } from '@tremor/react';
 
 interface ITotalDonutChartProps {
-  totalInterest: number;
-  totalCost: number;
-  totalInsurance: number;
-  loanPrincipal: number;
+  loan: Loan;
 }
 
-const TotalDonutChart: React.FunctionComponent<
-  ITotalDonutChartProps
-> = props => {
-  const data = [
+const TotalDonutChart: React.FunctionComponent<ITotalDonutChartProps> = ({
+  loan,
+}) => {
+  const { data, isLoading } = useFetchData<
+    ReturnType<typeof calculateAllCards>
+  >({
+    queryKey: ['calculate-cards', loan],
+    url: '/api/calculate-cards',
+    params: { ...loan },
+  });
+
+  if (!data || isLoading) {
+    return null;
+  }
+
+  const chartData = [
     {
       name: 'Intereses',
-      amount: props.totalInterest,
+      amount: data.totalInterest,
     },
     {
       name: 'Seguros',
-      amount: props.totalInsurance,
+      amount: data.totalInsurance,
     },
     {
       name: 'Monto del préstamo',
-      amount: props.loanPrincipal,
+      amount: loan.principal,
     },
   ];
+
   return (
-    <Card className='max-w-lg'>
-      <Title>Totales a pagar</Title>
+    <Card>
+      <Title>Total a pagar</Title>
       <DonutChart
-        className='mt-6'
-        data={data}
+        className='mt-6 lg:mt-12 lg:h-64'
+        data={chartData}
         category='amount'
         index='name'
         valueFormatter={roundAndFormat}

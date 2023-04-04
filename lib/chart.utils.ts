@@ -31,8 +31,9 @@ export function getPaymentDetailChartData(
 
 type AmortizationChartData = {
   year: number;
-  totalInterest: number;
-  endingBalance: number;
+  Interes: number;
+  'Saldo Capital': number;
+  Cuota: number;
 };
 export function getAmortizationChartData(loan: Loan): AmortizationChartData[] {
   const amortizationSchedule = generateAmortizationSchedule(loan);
@@ -43,8 +44,9 @@ export function getAmortizationChartData(loan: Loan): AmortizationChartData[] {
       year += 1;
       data.push({
         year,
-        endingBalance: row.endingBalance,
-        totalInterest: row.totalInterest,
+        'Saldo Capital': row.endingBalance,
+        Interes: row.totalInterest,
+        Cuota: row.payment,
       });
     }
   });
