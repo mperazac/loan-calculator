@@ -6,8 +6,8 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
+import * as Label from '@radix-ui/react-label';
 import { Button, TextInput } from '@tremor/react';
-import { Label } from 'flowbite-react';
 import * as React from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
@@ -76,13 +76,18 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className='p-4 md:p-10 bg-white border rounded-lg'
+      className='p-4 bg-white border rounded-lg md:p-10'
     >
       <div className='grid gap-6 mb-6 md:grid-cols-6'>
         <div className='space-y-6'>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='termInYears' value='Plazo total del crédito' />
+            <div className='block mb-2'>
+              <Label.Root
+                className='text-sm font-medium text-gray-900 dark:text-gray-300'
+                htmlFor='termInYears'
+              >
+                Plazo total del crédito
+              </Label.Root>
             </div>
             <TextInput
               aria-describedby='termInYears'
@@ -98,8 +103,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='principal' value='Monto total del crédito' />
+            <div className='block mb-2'>
+              <Label.Root
+                className='text-sm font-medium text-gray-900 dark:text-gray-300'
+                htmlFor='principal'
+              >
+                Monto total del crédito
+              </Label.Root>
             </div>
             <TextInput
               id='principal'
@@ -118,11 +128,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
         {periods.map((field, index) => (
           <div className='space-y-6' key={field.id}>
             <div>
-              <div className='mb-2 block'>
-                <Label
+              <div className='block mb-2'>
+                <Label.Root
+                  className='text-sm font-medium text-gray-900 dark:text-gray-300'
                   htmlFor={`periods[${index}].termInYears`}
-                  value={`Plazo del periodo ${index + 1}`}
-                />
+                >
+                  {`Plazo del periodo ${index + 1}`}
+                </Label.Root>
               </div>
               <TextInput
                 id={`periods[${index}].termInYears`}
@@ -141,11 +153,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
               />
             </div>
             <div>
-              <div className='mb-2 block'>
-                <Label
+              <div className='block mb-2'>
+                <Label.Root
+                  className='text-sm font-medium text-gray-900 dark:text-gray-300'
                   htmlFor={`periods[${index}].annualInterestRate`}
-                  value={`Tasa de interés del periodo ${index + 1}`}
-                />
+                >
+                  {`Tasa de interés del periodo ${index + 1}`}
+                </Label.Root>
               </div>
               <TextInput
                 id={`periods[${index}].annualInterestRate`}
@@ -166,11 +180,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
               />
             </div>
             <div>
-              <div className='mb-2 block'>
-                <Label
+              <div className='block mb-2'>
+                <Label.Root
+                  className='text-sm font-medium text-gray-900 dark:text-gray-300'
                   htmlFor={`periods[${index}].extraPayment`}
-                  value='Pago mensual extraordinario (opcional)'
-                />
+                >
+                  Pago mensual extraordinario (opcional)
+                </Label.Root>
               </div>
               <TextInput
                 id={`periods[${index}].extraPayment`}
@@ -194,7 +210,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
                 variant='secondary'
                 color='gray'
               >
-                <TrashIcon className='h-3 w-3' />
+                <TrashIcon className='w-3 h-3' />
               </Button>
             )}
           </div>
@@ -202,11 +218,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
 
         <div className='space-y-6'>
           <div>
-            <div className='mb-2 block'>
-              <Label
+            <div className='block mb-2'>
+              <Label.Root
+                className='text-sm font-medium text-gray-900 dark:text-gray-300'
                 htmlFor='lifeInsurance'
-                value='Seguro saldo deudor (opcional)'
-              />
+              >
+                Seguro saldo deudor (opcional)
+              </Label.Root>
             </div>
             <TextInput
               id='lifeInsurance'
@@ -223,11 +241,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label
+            <div className='block mb-2'>
+              <Label.Root
+                className='text-sm font-medium text-gray-900 dark:text-gray-300'
                 htmlFor='fireInsurance'
-                value='Seguro patrimonial (opcional)'
-              />
+              >
+                Seguro patrimonial (opcional)
+              </Label.Root>
             </div>
             <TextInput
               id='fireInsurance'
@@ -244,11 +264,13 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label
+            <div className='block mb-2'>
+              <Label.Root
+                className='text-sm font-medium text-gray-900 dark:text-gray-300'
                 htmlFor='jobLossInsurance'
-                value='Seguro de desempleo (opcional)'
-              />
+              >
+                Seguro de desempleo (opcional)
+              </Label.Root>
             </div>
             <TextInput
               id='jobLossInsurance'
@@ -266,7 +288,7 @@ const LoanForm: React.FunctionComponent<ILoanFormProps> = props => {
           </div>
         </div>
       </div>
-      <div className='flex gap-4 justify-end'>
+      <div className='flex justify-end gap-4'>
         <Button
           onClick={addPeriodToLoan}
           variant='secondary'
