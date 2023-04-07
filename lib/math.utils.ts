@@ -243,7 +243,7 @@ export function calculateLoan(loan: Loan) {
   };
 }
 
-export function calculateAllCards(loan: Loan) {
+export function calculateAllCosts(loan: Loan) {
   const {
     principal,
     periods,
@@ -302,6 +302,74 @@ export function calculateAllCards(loan: Loan) {
     totalInterest,
     totalInsurance,
     totalMonths,
+    monthlyPaymentsPerPeriods,
+    monthlyInsurancePayment,
+  };
+}
+
+export function calculateSavings(loan: Loan) {
+  const extraPayment = loan.periods.reduce(
+    (acc, period) => acc + (period.extraPayment || 0),
+    0,
+  );
+  if (extraPayment === 0) {
+    return null;
+  }
+  const loanWithoutExtraPayment = {
+    ...loan,
+    periods: loan.periods.map(period => ({
+      ...period,
+      extraPayment: 0,
+    })),
+  };
+  const {
+    totalCost: totalCostWithoutExtraPayment,
+    totalInterest: totalInterestWithoutExtraPayment,
+    totalMonths: totalMonthsWithoutExtraPayment,
+    totalInsurance: totalInsuranceWithoutExtraPayment,
+  } = calculateAllCosts(loanWithoutExtraPayment);
+  const { totalCost, totalInterest, totalMonths, totalInsurance } =
+    calculateAllCosts(loan);
+  const totalSavings = totalCostWithoutExtraPayment - totalCost;
+  const totalInterestSavings = totalInterestWithoutExtraPayment - totalInterest;
+  const totalMonthsSavings = totalMonthsWithoutExtraPayment - totalMonths;
+  const totalInsuranceSavings =
+    totalInsuranceWithoutExtraPayment - totalInsurance;
+  return {
+    totalSavings,
+    totalInterestSavings,
+    totalMonthsSavings,
+    totalInsuranceSavings,
+  };
+}
+
+export function getCardsData(loan: Loan) {
+  const {
+    totalCost,
+    totalInterest,
+    totalInsurance,
+    totalMonths,
+    monthlyPaymentsPerPeriods,
+    monthlyInsurancePayment,
+  } = calculateAllCosts(loan);
+  const savings = calculateSavings(loan);
+  return {
+    totalCost: {
+      total: totalCost,
+      savings: savings ? savings.totalSavings : 0,
+    },
+    totalInterest: {
+      total: totalInterest,
+      savings: savings ? savings.totalInterestSavings : 0,
+    },
+    totalInsurance: {
+      total: totalInsurance,
+      savings: savings ? savings.totalInsuranceSavings : 0,
+    },
+    totalMonths: {
+      total: totalMonths,
+      savings: savings ? savings.totalMonthsSavings : 0,
+    },
     monthlyPaymentsPerPeriods,
     monthlyInsurancePayment,
   };

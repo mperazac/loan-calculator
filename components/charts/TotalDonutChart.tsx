@@ -1,5 +1,5 @@
 import useFetchData from '@/hooks/useFetchData';
-import { calculateAllCards, roundAndFormat } from '@/lib/math.utils';
+import { calculateAllCosts, roundAndFormat } from '@/lib/math.utils';
 import { Loan } from '@/types/loan';
 import { Card, DonutChart, Title } from '@tremor/react';
 
@@ -11,7 +11,7 @@ const TotalDonutChart: React.FunctionComponent<ITotalDonutChartProps> = ({
   loan,
 }) => {
   const { data, isLoading } = useFetchData<
-    ReturnType<typeof calculateAllCards>
+    ReturnType<typeof calculateAllCosts>
   >({
     queryKey: ['calculate-cards', loan],
     url: '/api/calculate-cards',

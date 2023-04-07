@@ -1,6 +1,6 @@
 import Card from '@/components/common/Card';
 import useFetchData from '@/hooks/useFetchData';
-import { calculateAllCards, roundAndFormat } from '@/lib/math.utils';
+import { calculateAllCosts, roundAndFormat } from '@/lib/math.utils';
 import type { Loan } from '@/types/loan';
 import * as React from 'react';
 import DebtTermCard from './Cards/DebtTermCard';
@@ -12,7 +12,7 @@ type CostCardsProps = {
 
 const CostCards: React.FunctionComponent<CostCardsProps> = ({ loan }) => {
   const { data, isLoading } = useFetchData<
-    ReturnType<typeof calculateAllCards>
+    ReturnType<typeof calculateAllCosts>
   >({
     queryKey: ['calculate-cards', loan],
     url: '/api/calculate-cards',
