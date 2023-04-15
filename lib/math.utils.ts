@@ -307,42 +307,6 @@ export function calculateAllCosts(loan: Loan) {
   };
 }
 
-export function calculateSavings(loan: Loan) {
-  const extraPayment = loan.periods.reduce(
-    (acc, period) => acc + (period.extraPayment || 0),
-    0,
-  );
-  if (extraPayment === 0) {
-    return null;
-  }
-  const loanWithoutExtraPayment = {
-    ...loan,
-    periods: loan.periods.map(period => ({
-      ...period,
-      extraPayment: 0,
-    })),
-  };
-  const {
-    totalCost: totalCostWithoutExtraPayment,
-    totalInterest: totalInterestWithoutExtraPayment,
-    totalMonths: totalMonthsWithoutExtraPayment,
-    totalInsurance: totalInsuranceWithoutExtraPayment,
-  } = calculateAllCosts(loanWithoutExtraPayment);
-  const { totalCost, totalInterest, totalMonths, totalInsurance } =
-    calculateAllCosts(loan);
-  const totalSavings = totalCostWithoutExtraPayment - totalCost;
-  const totalInterestSavings = totalInterestWithoutExtraPayment - totalInterest;
-  const totalMonthsSavings = totalMonthsWithoutExtraPayment - totalMonths;
-  const totalInsuranceSavings =
-    totalInsuranceWithoutExtraPayment - totalInsurance;
-  return {
-    totalSavings,
-    totalInterestSavings,
-    totalMonthsSavings,
-    totalInsuranceSavings,
-  };
-}
-
 export function getCardsData(loan: Loan) {
   const {
     totalCost,
@@ -352,23 +316,40 @@ export function getCardsData(loan: Loan) {
     monthlyPaymentsPerPeriods,
     monthlyInsurancePayment,
   } = calculateAllCosts(loan);
-  const savings = calculateSavings(loan);
+  const {
+    totalCost: totalCostNoExtra,
+    totalInterest: totalInterestNoExtra,
+    totalInsurance: totalInsuranceNoExtra,
+    totalMonths: totalMonthsNoExtra,
+  } = calculateAllCosts({
+    ...loan,
+    periods: loan.periods.map((period: Loan['periods'][number]) => ({
+      ...period,
+      extraPayment: 0,
+    })),
+  });
+
   return {
     totalCost: {
       total: totalCost,
-      savings: savings ? savings.totalSavings : 0,
+      difference: totalCostNoExtra - totalCost,
+      percentage: (totalCostNoExtra - totalCost) / totalCostNoExtra,
     },
     totalInterest: {
       total: totalInterest,
-      savings: savings ? savings.totalInterestSavings : 0,
+      difference: totalInterestNoExtra - totalInterest,
+      percentage: (totalInterestNoExtra - totalInterest) / totalInterestNoExtra,
     },
     totalInsurance: {
       total: totalInsurance,
-      savings: savings ? savings.totalInsuranceSavings : 0,
+      difference: totalInsuranceNoExtra - totalInsurance,
+      percentage:
+        (totalInsuranceNoExtra - totalInsurance) / totalInsuranceNoExtra,
     },
     totalMonths: {
       total: totalMonths,
-      savings: savings ? savings.totalMonthsSavings : 0,
+      difference: totalMonthsNoExtra - totalMonths,
+      percentage: (totalMonthsNoExtra - totalMonths) / totalMonthsNoExtra,
     },
     monthlyPaymentsPerPeriods,
     monthlyInsurancePayment,

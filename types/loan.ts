@@ -1,4 +1,5 @@
 import { calculateLoan } from '@/lib/math.utils';
+import type { DeltaType, Size } from '@tremor/react';
 import z from 'zod';
 
 export const LoanSchema = z
@@ -72,3 +73,12 @@ export type AmortizationRow = {
 };
 
 export type LoanCalculations = ReturnType<typeof calculateLoan>;
+
+export type BadgeProps =
+  | {
+      deltaType: DeltaType;
+      isIncreasePositive: boolean;
+      size: Size;
+      value: string;
+    }
+  | undefined;
