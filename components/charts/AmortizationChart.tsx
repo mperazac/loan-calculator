@@ -4,48 +4,48 @@ import { Loan } from '@/types/loan';
 import { Card, LineChart, Title } from '@tremor/react';
 
 interface IAmortizationChartProps {
-  loan: Loan;
+	loan: Loan;
 }
 
 const dataFormatter = (number: number) => {
-  return '$ ' + Intl.NumberFormat('us').format(number).toString();
+	return '$ ' + Intl.NumberFormat('us').format(number).toString();
 };
 
 const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
-  loan,
+	loan,
 }) => {
-  const { data, isLoading } = useFetchData<
-    ReturnType<typeof getAmortizationChartData>
-  >({
-    queryKey: ['calculate-amortization-chart', loan],
-    url: '/api/calculate-amortization-chart',
-    params: { ...loan },
-    reactQueryOptions: {
-      enabled: !!loan,
-    },
-  });
+	const { data, isLoading } = useFetchData<
+		ReturnType<typeof getAmortizationChartData>
+	>({
+		queryKey: ['calculate-amortization-chart', loan],
+		url: '/api/calculate-amortization-chart',
+		params: { ...loan },
+		reactQueryOptions: {
+			enabled: !!loan,
+		},
+	});
 
-  if (!data && !isLoading) {
-    return null;
-  }
+	if (!data && !isLoading) {
+		return null;
+	}
 
-  return (
-    <Card>
-      <Title>Pago de amortización y de intereses</Title>
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && (
-        <LineChart
-          className='mt-4 h-72'
-          data={data}
-          index='year'
-          categories={['Interes', 'Saldo Capital']}
-          colors={['slate', 'indigo']}
-          valueFormatter={dataFormatter}
-          yAxisWidth={75}
-        />
-      )}
-    </Card>
-  );
+	return (
+		<Card>
+			<Title>Pago de amortización y de intereses</Title>
+			{isLoading && <div>Loading...</div>}
+			{!isLoading && (
+				<LineChart
+					className='mt-4 h-72'
+					data={data}
+					index='year'
+					categories={['Interes', 'Saldo Capital']}
+					colors={['slate', 'indigo']}
+					valueFormatter={dataFormatter}
+					yAxisWidth={75}
+				/>
+			)}
+		</Card>
+	);
 };
 
 export default AmortizationChart;
