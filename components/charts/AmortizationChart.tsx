@@ -35,10 +35,10 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
         <LineChart
-          className='h-72 mt-4'
+          className='mt-4 h-72'
           data={data}
           index='year'
-          categories={['Interes', 'Saldo Capital', 'Cuota']}
+          categories={['Interes', 'Saldo Capital']}
           colors={['slate', 'indigo']}
           valueFormatter={dataFormatter}
           yAxisWidth={75}
