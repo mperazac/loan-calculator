@@ -8,7 +8,7 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import {
-	Card,
+	Card as TremorCard,
 	Table,
 	TableBody,
 	TableCell,
@@ -18,6 +18,7 @@ import {
 	Title,
 } from '@tremor/react';
 import * as React from 'react';
+import Skeleton from './Skeleton';
 
 type IAmortizationTableProps = {
 	loan: Loan;
@@ -73,12 +74,16 @@ const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
 		getCoreRowModel: getCoreRowModel(),
 	});
 
-	if (!data || isLoading) {
+	if (isLoading) {
+		return <Skeleton orientation='horizontal' />;
+	}
+
+	if (!data) {
 		return null;
 	}
 
 	return (
-		<Card>
+		<TremorCard decoration='top' decorationColor='indigo'>
 			<Title>Tabla de amortización</Title>
 
 			<Table className='mt-10'>
@@ -113,7 +118,7 @@ const AmortizationTable: React.FunctionComponent<IAmortizationTableProps> = ({
 					))}
 				</TableBody>
 			</Table>
-		</Card>
+		</TremorCard>
 	);
 };
 

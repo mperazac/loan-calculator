@@ -2,7 +2,8 @@ import useFetchData from '@/hooks/useFetchData';
 import { getPaymentDetailChartData } from '@/lib/chart.utils';
 import { roundAndFormat } from '@/lib/math.utils';
 import { Loan } from '@/types/loan';
-import { BarChart, Card, Title } from '@tremor/react';
+import { BarChart, Card as TremorCard, Title } from '@tremor/react';
+import Skeleton from '../Skeleton';
 
 interface IAmortizationChartProps {
 	loan: Loan;
@@ -22,12 +23,16 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
 		},
 	});
 
-	if (!data && !isLoading) {
+	if (isLoading) {
+		return <Skeleton />;
+	}
+
+	if (!data) {
 		return null;
 	}
 
 	return (
-		<Card>
+		<TremorCard decoration='top' decorationColor='indigo'>
 			<Title>Detalle de pago al principal e intereses</Title>
 			{isLoading && <div>Loading...</div>}
 			{!isLoading && (
@@ -42,7 +47,7 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
 					stack
 				/>
 			)}
-		</Card>
+		</TremorCard>
 	);
 };
 

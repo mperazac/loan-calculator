@@ -29,7 +29,41 @@ const CostCards: React.FunctionComponent<CostCardsProps> = ({ loan }) => {
 		return loan.periods.length;
 	}
 
-	if (!data || isLoading) {
+	function isInsuranceEnabled() {
+		const { fireInsurance = 0, lifeInsurance = 0, jobLossInsurance = 0 } = loan;
+		return fireInsurance > 0 || lifeInsurance > 0 || jobLossInsurance > 0;
+	}
+
+	if (isLoading) {
+		return (
+			<>
+				<div
+					className={`grid grid-cols-${getCardSize()} gap-4 md:gap-8 mb-4 md:mb-8`}
+				>
+					{loan.periods.map((mp, index) => (
+						<Card
+							isLoading={isLoading}
+							key={index}
+							isLoadingOrientation='horizontal'
+						/>
+					))}
+				</div>
+				<div
+					className={`grid grid-cols-2 md:grid-cols-${DEFAULT_CARDS_TOTAL} gap-4 md:gap-8 mb-4 md:mb-8`}
+				>
+					<Card isLoading={isLoading} isLoadingOrientation='horizontal' />
+
+					{isInsuranceEnabled() && (
+						<Card isLoading={isLoading} isLoadingOrientation='horizontal' />
+					)}
+					<Card isLoading={isLoading} isLoadingOrientation='horizontal' />
+					<Card isLoading={isLoading} isLoadingOrientation='horizontal' />
+				</div>
+			</>
+		);
+	}
+
+	if (!data) {
 		return null;
 	}
 

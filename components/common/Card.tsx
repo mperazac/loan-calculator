@@ -9,17 +9,28 @@ import {
 	Card as TremorCard,
 } from '@tremor/react';
 import * as React from 'react';
+import Skeleton from '../Skeleton';
 
 interface ICardProps {
-	label: string;
+	label?: string;
 	tooltip?: string;
-	value: string;
+	value?: string;
 	subText?: string | JSX.Element;
-	badgeProps: BadgeProps;
+	badgeProps?: BadgeProps;
+	isLoading?: boolean;
+	isLoadingOrientation?: 'horizontal' | 'vertical';
 }
 
 const Card: React.FunctionComponent<ICardProps> = props => {
-	const { label, tooltip, value, subText, badgeProps } = props;
+	const {
+		label,
+		tooltip,
+		value,
+		subText,
+		badgeProps,
+		isLoading,
+		isLoadingOrientation,
+	} = props;
 
 	function renderSubtext() {
 		if (subText) {
@@ -29,6 +40,10 @@ const Card: React.FunctionComponent<ICardProps> = props => {
 			return subText;
 		}
 		return null;
+	}
+
+	if (isLoading) {
+		return <Skeleton orientation={isLoadingOrientation} />;
 	}
 
 	return (

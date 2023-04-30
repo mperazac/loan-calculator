@@ -1,7 +1,8 @@
 import useFetchData from '@/hooks/useFetchData';
 import { getCardsData, roundAndFormat } from '@/lib/math.utils';
 import { Loan } from '@/types/loan';
-import { Card, DonutChart, Title } from '@tremor/react';
+import { Card as TremorCard, DonutChart, Title } from '@tremor/react';
+import Skeleton from '../Skeleton';
 
 interface ITotalDonutChartProps {
 	loan: Loan;
@@ -16,7 +17,11 @@ const TotalDonutChart: React.FunctionComponent<ITotalDonutChartProps> = ({
 		params: { ...loan },
 	});
 
-	if (!data || isLoading) {
+	if (isLoading) {
+		return <Skeleton />;
+	}
+
+	if (!data) {
 		return null;
 	}
 
@@ -36,7 +41,7 @@ const TotalDonutChart: React.FunctionComponent<ITotalDonutChartProps> = ({
 	];
 
 	return (
-		<Card>
+		<TremorCard decoration='top' decorationColor='indigo'>
 			<Title>Total a pagar</Title>
 			<DonutChart
 				className='mt-6 lg:mt-12 lg:h-64'
@@ -46,7 +51,7 @@ const TotalDonutChart: React.FunctionComponent<ITotalDonutChartProps> = ({
 				valueFormatter={roundAndFormat}
 				colors={['indigo', 'cyan', 'amber']}
 			/>
-		</Card>
+		</TremorCard>
 	);
 };
 

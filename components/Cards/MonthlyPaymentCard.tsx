@@ -9,6 +9,7 @@ interface IMonthlyPaymentCardProps {
 	totalInsurancePerMonth: number;
 	extraPayment: number;
 	period: number;
+	isLoading?: boolean;
 }
 
 const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
@@ -16,6 +17,7 @@ const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
 	period,
 	totalInsurancePerMonth,
 	extraPayment = 0,
+	isLoading = false,
 }) => {
 	return (
 		<Card
@@ -38,6 +40,7 @@ const MonthlyPaymentCard: React.FunctionComponent<IMonthlyPaymentCardProps> = ({
 					)}
 				</div>
 			}
+			isLoading={isLoading}
 		/>
 	);
 };

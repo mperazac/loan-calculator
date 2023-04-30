@@ -1,7 +1,8 @@
 import useFetchData from '@/hooks/useFetchData';
 import { getAmortizationChartData } from '@/lib/chart.utils';
 import { Loan } from '@/types/loan';
-import { Card, LineChart, Title } from '@tremor/react';
+import { Card as TremorCard, LineChart, Title } from '@tremor/react';
+import Skeleton from '../Skeleton';
 
 interface IAmortizationChartProps {
 	loan: Loan;
@@ -25,12 +26,16 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
 		},
 	});
 
-	if (!data && !isLoading) {
+	if (isLoading) {
+		return <Skeleton />;
+	}
+
+	if (!data) {
 		return null;
 	}
 
 	return (
-		<Card>
+		<TremorCard decoration='top' decorationColor='indigo'>
 			<Title>Pago de amortización y de intereses</Title>
 			{isLoading && <div>Loading...</div>}
 			{!isLoading && (
@@ -44,7 +49,7 @@ const AmortizationChart: React.FunctionComponent<IAmortizationChartProps> = ({
 					yAxisWidth={75}
 				/>
 			)}
-		</Card>
+		</TremorCard>
 	);
 };
 

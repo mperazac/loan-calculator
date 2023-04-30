@@ -6,10 +6,11 @@ interface IDebtTermCardProps {
 	total: number;
 	difference: number;
 	percentage: number;
+	isLoading?: boolean;
 }
 
 const DebtTermCard: React.FunctionComponent<IDebtTermCardProps> = props => {
-	const { total } = props;
+	const { total, isLoading } = props;
 	const years = Math.floor(total / 12);
 	const remainingMonths = total % 12;
 
@@ -21,6 +22,7 @@ const DebtTermCard: React.FunctionComponent<IDebtTermCardProps> = props => {
 			}`}
 			subText={props.difference ? `Ahorro de ${props.difference} meses` : ''}
 			badgeProps={getBadgeProps(props)}
+			isLoading={isLoading}
 		/>
 	);
 };
